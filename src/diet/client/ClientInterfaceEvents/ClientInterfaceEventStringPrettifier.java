@@ -353,16 +353,16 @@ public class ClientInterfaceEventStringPrettifier {
 	}
 
 	public static String superscript(String str) {
-		str = str.replaceAll("0", "â�°");
-		str = str.replaceAll("1", "Â¹");
-		str = str.replaceAll("2", "Â²");
-		str = str.replaceAll("3", "Â³");
-		str = str.replaceAll("4", "â�´");
-		str = str.replaceAll("5", "â�µ");
-		str = str.replaceAll("6", "â�¶");
-		str = str.replaceAll("7", "â�·");
-		str = str.replaceAll("8", "â�¸");
-		str = str.replaceAll("9", "â�¹");
+		str = str.replaceAll("0", "" + '\u2070');
+		str = str.replaceAll("1", "" + '\u2071');
+		str = str.replaceAll("2", "" + '\u2072');
+		str = str.replaceAll("3", "" + '\u2073');
+		str = str.replaceAll("4", "" + '\u2074');
+		str = str.replaceAll("5", "" + '\u2075');
+		str = str.replaceAll("6", "" + '\u2076');
+		str = str.replaceAll("7", "" + '\u2077');
+		str = str.replaceAll("8", "" + '\u2078');
+		str = str.replaceAll("9", "" + '\u2079');
 		return str;
 	}
 

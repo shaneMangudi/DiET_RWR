@@ -11,10 +11,14 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
 
 	private Participant director = null;
 	private Participant matcher = null;
+	
+	private static Conversation setupTask(Conversation conversation) {
+		config.param_experimentID = "ReferenceWithoutReferentsTask";
+		return conversation;
+	}
 
 	public ReferenceWithoutReferentsTask(Conversation conversation) {
-		super(conversation);
-		config.param_experimentID = "ReferenceWithoutReferentsTask";
+		super(setupTask(conversation));
 		config.client_turnDisplayLimit = 2;
 
 		DefaultConversationController.autologinParticipantIDGenerator = new IRandomParticipantIDGenerator() {

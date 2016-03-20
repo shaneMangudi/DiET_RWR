@@ -103,7 +103,7 @@ public class Configuration {
 	public String interventions_defaultSpoofErrorMessage = "Network error - please wait";
 
 	// Settings for output to CSV spreadsheet
-	public String recordeddata_CSVSeparator = "¦";
+	public String recordeddata_CSVSeparator = "|";
 	public String recordeddata_newlinestring = "((NEWLINE))";
 
 	public String debug_fakeTypingByClientSTARTTrigger = "/startdebug"; // This
