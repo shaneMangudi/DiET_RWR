@@ -1,0 +1,1 @@
+This directory contains settings for experiments, and it also containts in the util directory, some parsers and part of speech taggers.
