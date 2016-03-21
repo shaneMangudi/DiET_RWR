@@ -1,38 +1,33 @@
 package diet.server.ConversationController;
 
-import diet.attribval.AttribVal;
+import java.util.Vector;
+
 import diet.debug.Debug;
-import diet.task.mazegame.MazeGameController2WAY;
-import diet.task.mazegame.MazeGameLoadMazesFromJarFile;
 import diet.message.MessageChatTextFromClient;
 import diet.message.MessageKeypressed;
 import diet.message.MessageTask;
 import diet.message.MessageWYSIWYGDocumentSyncFromClientInsert;
 import diet.message.MessageWYSIWYGDocumentSyncFromClientRemove;
-import diet.server.ConnectionListener;
 import diet.server.Conversation;
+import diet.server.Participant;
 import diet.server.ConversationController.ui.JInterfaceMenuButtonsReceiverInterface;
 import diet.server.ConversationController.ui.JInterfaceSinglePressButtonFIVE;
-import diet.server.Participant;
+import diet.task.mazegame.Maze;
+import diet.task.mazegame.MazeGameController2WAY;
+import diet.task.mazegame.MazeGameLoadMazesFromJarFile;
 import diet.task.mazegame.message.MessageCursorUpdate;
-import java.util.Vector;
 
 public class MazeGameConversationControllerMultipleDyads extends DefaultConversationController
 		implements JInterfaceMenuButtonsReceiverInterface {
 
-	Vector mazegameControllers = new Vector();
+	Vector<MazeGameController2WAY> mazegameControllers = new Vector<>();
 	JInterfaceSinglePressButtonFIVE jispb;
-	Vector participantsQueuedLLLL = new Vector();
-	Vector participantsQueuedRRRRR = new Vector();
-	Vector conversationControllers = new Vector();
-
-	// MazeGameController2WAY mgc;
-	// MazeGameController2WAY mgc;
+	Vector<Participant> participantsQueuedLLLL = new Vector<>();
+	Vector<Participant> participantsQueuedRRRRR = new Vector<>();
 
 	public MazeGameConversationControllerMultipleDyads(Conversation c) {
 		super(c);
 		jispb = new JInterfaceSinglePressButtonFIVE(this, "START", "STARTSHUFFLED", "EXTERNAL", "", "");
-		String portNumberOfServer = "" + ConnectionListener.staticGetPortNumber();
 		config.param_experimentID = "DefaultMultiPartyMazeGame";
 
 		config.login_numberOfParticipants = 2;
@@ -192,6 +187,7 @@ public class MazeGameConversationControllerMultipleDyads extends DefaultConversa
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public void startexperiment(boolean shuffle) {
 		if (this.participantsQueuedLLLL.size() != this.participantsQueuedRRRRR.size()) {
 			Conversation.printWSln("Main", "CANNOT START - THERE IS AN UNEQUAL NUMBER OF GROUPS");
@@ -199,20 +195,16 @@ public class MazeGameConversationControllerMultipleDyads extends DefaultConversa
 		}
 
 		MazeGameLoadMazesFromJarFile mglmfj = new MazeGameLoadMazesFromJarFile();
-		Vector[] bothmazes;
-
-		// if(!shuffle){ bothmazes = mglmfj.getSetOf12MazesFromJarASTEXT(); }
-		// else{ bothmazes = mglmfj.getSetOf12MazesFromJarASTEXTShuffled(); }
-		// mglmfj.initializeRandomized();
+		Vector<Maze>[] bothmazes;
 
 		for (int i = 0; i < this.participantsQueuedLLLL.size(); i++) {
 			Participant pL = (Participant) participantsQueuedLLLL.elementAt(i);
 			Participant pR = (Participant) participantsQueuedRRRRR.elementAt(i);
 
 			if (!shuffle) {
-				bothmazes = mglmfj.getSetOf12MazesFromJarASTEXT();
+				bothmazes = (Vector<Maze>[]) mglmfj.getSetOf12MazesFromJarASTEXT();
 			} else {
-				bothmazes = mglmfj.getSetOf12MazesFromJarASTEXTShuffled();
+				bothmazes = (Vector<Maze>[]) mglmfj.getSetOf12MazesFromJarASTEXTShuffled();
 			}
 			MazeGameController2WAY mgcNEW = new MazeGameController2WAY(conversation, bothmazes[0], bothmazes[1]);
 			this.mazegameControllers.addElement(mgcNEW);
@@ -220,7 +212,7 @@ public class MazeGameConversationControllerMultipleDyads extends DefaultConversa
 
 			participantPartnering.createNewSubdialogue(pL, pR);
 			isTypingOrNotTyping.addPairWhoAreMutuallyInformedOfTyping(pL, pR);
-			Vector recipients = new Vector();
+			Vector<Participant> recipients = new Vector<>();
 			recipients.addElement(pL);
 			recipients.addElement(pR);
 			conversation.newsendInstructionToMultipleParticipants(recipients, "Please start!");

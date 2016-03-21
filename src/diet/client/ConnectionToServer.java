@@ -2,7 +2,6 @@ package diet.client;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
