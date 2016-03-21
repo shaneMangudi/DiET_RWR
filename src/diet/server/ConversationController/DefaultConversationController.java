@@ -94,6 +94,10 @@ public abstract class DefaultConversationController {
 	public boolean requestParticipantJoinConversation(String participantID) {
 		return true;
 	}
+	
+	public void setupGlobalConfig() {
+		
+	}
 
 	public MessageClientSetupParameters processRequestForInitialChatToolSettings() {
 		boolean alignmentIsVertical = true;
@@ -110,20 +114,10 @@ public abstract class DefaultConversationController {
 			styleddocsettings = new StyledDocumentStyleSettings(background, selfColor, masSELF);
 			return new MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight("server", "servername2",
 					this.config.client_MainWindow_width, this.config.client_MainWindow_height, alignmentIsVertical,
-					this.config.client_numberOfWindows, ownWindowNumber, // This
-																			// needs
-																			// to
-																			// be
-																			// loaded
-																			// from
-																			// the
-																			// Permissions
-																			// File
-																			// //Get
-																			// x,y
+					this.config.client_numberOfWindows, ownWindowNumber,
 					false, true, "Setting up", true, this.config.client_TextEntryWindow_width,
 					this.config.client_TextEntryWindow_height, this.config.client_TextEntryWindow_maximumtextlength,
-					styleddocsettings);
+					styleddocsettings, this.getClass().getName());
 		} catch (Exception e) {
 			Conversation.printWSln("Main",
 					"Could not find parameters for chat tool client interface...attempting to use defaults");

@@ -2,29 +2,66 @@ package diet.client;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
+import java.util.Date;
+import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
-import diet.task.mazegame.ClientMazeGameComms;
-import diet.message.*;
+import diet.message.Keypress;
+import diet.message.Message;
+import diet.message.MessageChangeClientInterfaceProperties;
+import diet.message.MessageChatTextFromClient;
+import diet.message.MessageChatTextToClient;
+import diet.message.MessageClientCloseDown;
+import diet.message.MessageClientLogon;
+import diet.message.MessageClientSetupParameters;
+import diet.message.MessageClientSetupParametersWithSendButtonAndTextEntryOneTurnAtATime;
+import diet.message.MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight;
+import diet.message.MessageClientSetupSuccessful;
+import diet.message.MessageDisplayChangeJProgressBar;
+import diet.message.MessageDisplayChangeWebpage;
+import diet.message.MessageDisplayCloseWindow;
+import diet.message.MessageDisplayNEWWebpage;
+import diet.message.MessageDummy;
+import diet.message.MessageErrorFromClient;
+import diet.message.MessageGridImageStimuliSelectionToClient;
+import diet.message.MessageGridImagesStimuliChangeImages;
+import diet.message.MessageGridImagesStimuliSendSetToClient;
+import diet.message.MessageGridTextStimuliChangeTexts;
+import diet.message.MessageGridTextStimuliInitialize;
+import diet.message.MessageGridTextStimuliSelectionToClient;
+import diet.message.MessageKeypressed;
+import diet.message.MessageOpenClientBrowserWebpage;
+import diet.message.MessagePopup;
+import diet.message.MessagePopupClientLogonEmailRequest;
+import diet.message.MessagePopupClientLogonUsernameRequest;
+import diet.message.MessagePopupResponseFromClient;
+import diet.message.MessageStimulusImageChangeImage;
+import diet.message.MessageStimulusImageDisplayNewJFrame;
+import diet.message.MessageSubliminalStimuliChangeImage;
+import diet.message.MessageSubliminalStimuliDisplayText;
+import diet.message.MessageSubliminalStimuliSendSetToClient;
+import diet.message.MessageTask;
+import diet.message.MessageWYSIWYGDocumentSyncFromClientInsert;
+import diet.message.MessageWYSIWYGDocumentSyncFromClientRemove;
+import diet.server.Conversation;
 import diet.server.ConversationController.DefaultConversationController;
 import diet.server.ConversationController.ui.OpenInBrowser;
 import diet.server.experimentmanager.ui.JEMStarter;
 import diet.serverclientconsistencycheck.ServerClientConsistency;
 import diet.task.ClientTaskEventHandler;
-import diet.task.mazegame.message.MessageNewMazeGame;
 import diet.task.gridstimuli.JFrameGridImagesStimuli;
 import diet.task.gridstimuli.JFrameGridTextStimuli;
-
+import diet.task.mazegame.ClientMazeGameComms;
+import diet.task.mazegame.message.MessageNewMazeGame;
 import diet.task.tangram2D1M.ClientTangramGameComms;
 import diet.task.tangram2D1M.message.MessageNewTangrams;
-import java.net.InetAddress;
-import java.net.SocketAddress;
-import java.util.Date;
-import java.util.Random;
-import javax.swing.SwingUtilities;
 
 /**
  * This deals with low-level network communication with server. It exchanges
@@ -232,6 +269,13 @@ public class ConnectionToServer extends Thread {
 
 			final MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight mcspwbyh = (MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight) m;
 
+			try {
+				Class<?> controller = Class.forName(mcspwbyh.getExperimentClassName());
+				controller.getMethod("setupGlobalConfig", Conversation.class).invoke(null, (Conversation) null);
+			} catch(Exception ignored) {
+				// Empty catch clause
+			}
+			
 			JChatFrameMultipleWindowsWithSendButtonWidthByHeight jcfsw;
 			jcfsw = null;
 

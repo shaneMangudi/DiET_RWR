@@ -25,12 +25,13 @@ public class MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight
 	private int maxLengthOfTextEntry = 0;
 
 	StyledDocumentStyleSettings wtsdsd;
+	private final String experimentClassName;
 
 	public MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight(String servername, String servername2,
 			int mainWindowWidth, int mainWindowHeight, boolean alignmentIsVertical, int numberOfWindows,
 			int windowOfOwnText, boolean windowIsEnabled, boolean participantHasStatusWindow, String statusDisplay,
 			boolean statusIsInRed, int textEntryWidth, int textEntryHeight, int maxNumberOfChars,
-			StyledDocumentStyleSettings wtsdsd) {
+			StyledDocumentStyleSettings wtsdsd, String experimentClassName) {
 		super(servername, servername2);
 
 		this.setWindowType(getWindowType());
@@ -49,7 +50,7 @@ public class MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight
 		this.textEntryHeight = textEntryHeight;
 		this.maxLengthOfTextEntry = maxNumberOfChars;
 		this.wtsdsd = wtsdsd;
-
+		this.experimentClassName = experimentClassName;
 	}
 
 	public int getMaxCharLength() {
@@ -176,4 +177,7 @@ public class MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight
 		this.timeOfLastScroll = timeOfLastScroll;
 	}
 
+	public String getExperimentClassName() {
+		return experimentClassName;
+	}
 }
