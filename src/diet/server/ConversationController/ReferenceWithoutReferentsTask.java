@@ -12,14 +12,15 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
 	private Participant director = null;
 	private Participant matcher = null;
 	
-	private static Conversation setupTask(Conversation conversation) {
+	// Hacky hackety way of seeting global config before object construction.
+	private static Conversation setupGlobalConfig(Conversation conversation) {
 		config.param_experimentID = "ReferenceWithoutReferentsTask";
+		config.client_turnDisplayLimit = 2;
 		return conversation;
 	}
 
 	public ReferenceWithoutReferentsTask(Conversation conversation) {
-		super(setupTask(conversation));
-		config.client_turnDisplayLimit = 2;
+		super(setupGlobalConfig(conversation));
 
 		DefaultConversationController.autologinParticipantIDGenerator = new IRandomParticipantIDGenerator() {
 			boolean position = true;
