@@ -6,17 +6,15 @@
 
 package diet.server.ConversationController;
 
+import java.util.Vector;
+
+import diet.attribval.AttribVal;
 import diet.message.MessageChatTextFromClient;
 import diet.message.MessageWYSIWYGDocumentSyncFromClientInsert;
 import diet.message.MessageWYSIWYGDocumentSyncFromClientRemove;
 import diet.server.Conversation;
 import diet.server.Participant;
 import diet.task.mazegame.MazeGameController2WAY;
-import diet.textmanipulationmodules.CyclicRandomTextGenerators.CyclicRandomDutchSelfRepairInitiation;
-import diet.textmanipulationmodules.Selfrepairgeneration.SelfRepair;
-import diet.utils.HashtableOfLong;
-import static java.awt.SystemColor.info;
-import java.util.Vector;
 
 /**
  *
@@ -35,22 +33,20 @@ public class EDIMazeGameBaseline extends MazeGameConversationControllerMultipleD
 	}
 
 	@Override
-	public synchronized void processChatText(Participant sender, MessageChatTextFromClient mct) {
-
+	public synchronized void processChatText(Participant sender, MessageChatTextFromClient messageChatTextFromClient) {
 		if (!this.experimentHasStarted) {
 			conversation.newsendInstructionToParticipant(sender, "Please wait for the experiment to start");
 			return;
 		}
 
-		MazeGameController2WAY mgccc = this.getMazeGameController(sender);
 		Participant pRecipient = (Participant) this.participantPartnering.getRecipients(sender).elementAt(0);
 		long currentTurnNo = sender.getNumberOfChatMessagesProduced();
-		MazeGameController2WAY mgcNEW = this.getMazeGameController(sender);
-		Vector additionalData = mgcNEW.getAdditionalData(sender);
-		conversation.newrelayTurnToPermittedParticipants(sender, mct, additionalData);
-		mgcNEW.appendToUI(sender.getUsername() + ": " + mct.getText());
+		MazeGameController2WAY mazeGameControllerForSender = this.getMazeGameController(sender);
+		Vector<AttribVal> additionalData = mazeGameControllerForSender.getAdditionalData(sender);
+		conversation.newrelayTurnToPermittedParticipants(sender, messageChatTextFromClient, additionalData);
+		mazeGameControllerForSender.appendToUI(sender.getUsername() + ": " + messageChatTextFromClient.getText());
 
-		if (mct.getText().equalsIgnoreCase("rj")) {
+		if (messageChatTextFromClient.getText().equalsIgnoreCase("rj")) {
 			this.getMazeGameController(sender).reconnectParticipant(sender);
 			conversation.newsendInstructionToParticipant(sender, "RESETTING");
 		}

@@ -739,8 +739,8 @@ public class MazeGameController2WAY extends DefaultTaskController {
 		return -9999999;
 	}
 
-	public Vector getAdditionalData(Participant p) {
-		Vector v = new Vector();
+	public Vector<AttribVal> getAdditionalData(Participant p) {
+		Vector<AttribVal> v = new Vector<>();
 		AttribVal av1 = new AttribVal("mazeno", this.mazeNumber);
 		v.addElement(av1);
 
