@@ -59,6 +59,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
 			this.isTypingOrNotTyping.addPairWhoAreMutuallyInformedOfTyping(director, matcher);
 			this.startExperiment();
 			conversation.newsendInstructionToMultipleParticipants(participants, "Experiment has started.");
+			conversation.newsendInstructionToMultipleParticipants(participants, "{{start}}");
 		}
 	}
 

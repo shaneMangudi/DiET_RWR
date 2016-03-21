@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Random;
 import java.util.Vector;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -89,11 +90,10 @@ public class ConnectionToServer extends Thread {
 	private JFrameGridImagesStimuli jfgridimagestimuli;
 	private JFrameGridTextStimuli jfgridtextstimuli;
 	private JFrameStimulusSingleImage jfssi;
+	private String experiment = "";
 
 	int turnsBetweenResets = 30;
 	int counter = 0;
-	JChatFrame jf;
-
 	// MessageChatTextToClient mctImmediatePriorByOther = null;
 
 	public ConnectionToServer(String serverName) {
@@ -271,6 +271,7 @@ public class ConnectionToServer extends Thread {
 			try {
 				Class<?> controller = Class.forName(mcspwbyh.getExperimentClassName());
 				controller.getMethod("setupGlobalConfig", Conversation.class).invoke(null, (Conversation) null);
+				this.experiment = mcspwbyh.getExperimentClassName();
 			} catch(Exception ignored) {
 				// Empty catch clause
 			}
@@ -344,8 +345,18 @@ public class ConnectionToServer extends Thread {
 				// System.out.println("checkingForincomingMessages");
 
 				Message m = (Message) in.readObject();
-
 				cntINCOMING++;
+				
+				// ReferenceWithoutReferentsTask //////////////////////////////////
+				if(this.experiment.endsWith("ReferenceWithoutReferentsTask") && m instanceof MessageChatTextToClient) {
+					MessageChatTextToClient message = (MessageChatTextToClient) m;
+					if(message.getText().equals("{{start}}")) {
+						new JFrame().setVisible(true);
+						continue;
+					}
+				}
+				//////////////////////////////////////////////////////////////////				
+				
 				// System.err.println("________________________________________________"+cntINCOMING);
 				if (m instanceof MessageChatTextToClient) {
 
