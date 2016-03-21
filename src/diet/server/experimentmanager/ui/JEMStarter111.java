@@ -160,7 +160,7 @@ public class JEMStarter111 extends javax.swing.JFrame {
 		jLabel2.setText("Connect to server port no:");
 
 		jTextField2.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-		jTextField2.setText("255.255.255.255");
+		jTextField2.setText("localhost");
 		jTextField2.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				jTextField2ActionPerformed(evt);
