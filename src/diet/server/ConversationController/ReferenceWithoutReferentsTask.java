@@ -1,5 +1,8 @@
 package diet.server.ConversationController;
 
+import java.util.Arrays;
+import java.util.Vector;
+
 import diet.message.MessageChatTextFromClient;
 import diet.server.Conversation;
 import diet.server.Participant;
@@ -47,10 +50,14 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
 		} else if (participant.getParticipantID().equals(MATCHER_ID)) {
 			matcher = participant;
 		}
+		
 		if (director != null && matcher != null) {
-			this.participantPartnering.createNewSubdialogue("rwr", director, matcher);
+			Vector<Participant> participants = new Vector<>(Arrays.asList(director, matcher));
+			
+			this.participantPartnering.createNewSubdialogue("rwr", participants);
 			this.isTypingOrNotTyping.addPairWhoAreMutuallyInformedOfTyping(director, matcher);
 			this.startExperiment();
+			conversation.newsendInstructionToMultipleParticipants(participants, "Experiment has started.");
 		}
 	}
 
