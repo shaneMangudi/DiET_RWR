@@ -3,53 +3,40 @@ package diet.message;
 import diet.client.StyledDocumentStyleSettings;
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight extends MessageClientSetupParameters
 		implements Serializable {
 
-	private int windowType;
-	private int windowOfOwnText = 0; // Check to see
-	private boolean alignmentIsVertical;
-	private int mainWindowWidth;
-	private int mainWindowHeight;
-	private int textEntryWidth;
-	private int textEntryHeight;
-	private boolean windowIsEnabled;
-	private String statusDisplay;
-	private boolean statusIsInRed;
-	private boolean participantHasStatusWindow;
-	private int numberOfWindows;
-
-	private long timeOfLastScroll; // This should be in a message from client to
-									// server
-
-	private int maxLengthOfTextEntry = 0;
-
-	StyledDocumentStyleSettings wtsdsd;
+	private final int windowOfOwnText;
+	private final boolean alignmentIsVertical;
+	private final int mainWindowWidth;
+	private final int mainWindowHeight;
+	private final int textEntryWidth;
+	private final int textEntryHeight;
+	private final boolean participantHasStatusWindow;
+	private final int numberOfWindows;
+	private final int maxLengthOfTextEntry;
+	private final StyledDocumentStyleSettings styledDocumentStyleSettings;
 	private final String experimentClassName;
 
 	public MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight(String servername, String servername2,
 			int mainWindowWidth, int mainWindowHeight, boolean alignmentIsVertical, int numberOfWindows,
 			int windowOfOwnText, boolean windowIsEnabled, boolean participantHasStatusWindow, String statusDisplay,
 			boolean statusIsInRed, int textEntryWidth, int textEntryHeight, int maxNumberOfChars,
-			StyledDocumentStyleSettings wtsdsd, String experimentClassName) {
+			StyledDocumentStyleSettings styledDocumentStyleSettings, String experimentClassName) {
 		super(servername, servername2);
 
-		this.setWindowType(getWindowType());
-		this.setNumberOfWindows(numberOfWindows);
-
-		this.setWindowOfOwnText(windowOfOwnText);
-		this.setWindowIsEnabled(windowIsEnabled);
-		this.setStatusDisplay(statusDisplay);
-		this.setStatusIsInRed(statusIsInRed);
-		this.setAlignmentIsVertical(alignmentIsVertical);
-		this.setParticipantHasStatusWindow(participantHasStatusWindow);
+		this.numberOfWindows = numberOfWindows;
+		this.windowOfOwnText = windowOfOwnText;
+		this.alignmentIsVertical = alignmentIsVertical;
+		this.participantHasStatusWindow = participantHasStatusWindow;
 
 		this.mainWindowWidth = mainWindowWidth;
 		this.mainWindowHeight = mainWindowHeight;
 		this.textEntryWidth = textEntryWidth;
 		this.textEntryHeight = textEntryHeight;
 		this.maxLengthOfTextEntry = maxNumberOfChars;
-		this.wtsdsd = wtsdsd;
+		this.styledDocumentStyleSettings = styledDocumentStyleSettings;
 		this.experimentClassName = experimentClassName;
 	}
 
@@ -57,40 +44,20 @@ public class MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight
 		return maxLengthOfTextEntry;
 	}
 
-	public StyledDocumentStyleSettings getWtsdsd() {
-		return wtsdsd;
-	}
-
-	public int getWindowType() {
-		return windowType;
-	}
-
-	public int getNoOfWindows() {
-		return getNumberOfWindows();
+	public StyledDocumentStyleSettings getStyledDocumentStyleSettings() {
+		return styledDocumentStyleSettings;
 	}
 
 	public int getParticipantsTextWindow() {
 		return getWindowOfOwnText();
 	}
 
-	public boolean getParticipantsWindowIsEnabled() {
-		return isWindowIsEnabled();
-	}
-
-	public String getStatusDisplay() {
-		return statusDisplay;
-	}
-
-	public boolean getStatusIsInRed() {
-		return isStatusIsInRed();
-	}
-
 	public boolean getAlignmentIsVertical() {
-		return this.isAlignmentIsVertical();
+		return alignmentIsVertical;
 	}
 
 	public boolean getParticipantHasStatusWindow() {
-		return isParticipantHasStatusWindow();
+		return participantHasStatusWindow;
 	}
 
 	public int getTextEntryWidth() {
@@ -109,74 +76,14 @@ public class MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight
 		return this.mainWindowHeight;
 	}
 
-	public String getMessageClass() {
-		return "ClientSetupParametersWYSIWYG";
-	}
-
-	public void setWindowType(int windowType) {
-		this.windowType = windowType;
-	}
-
 	public int getWindowOfOwnText() {
 		return windowOfOwnText;
-	}
-
-	public void setWindowOfOwnText(int windowOfOwnText) {
-		this.windowOfOwnText = windowOfOwnText;
-	}
-
-	public boolean isAlignmentIsVertical() {
-		return alignmentIsVertical;
-	}
-
-	public void setAlignmentIsVertical(boolean alignmentIsVertical) {
-		this.alignmentIsVertical = alignmentIsVertical;
 	}
 
 	public int getNumberOfWindows() {
 		return numberOfWindows;
 	}
-
-	public void setNumberOfWindows(int numberOfWindows) {
-		this.numberOfWindows = numberOfWindows;
-	}
-
-	public boolean isWindowIsEnabled() {
-		return windowIsEnabled;
-	}
-
-	public void setWindowIsEnabled(boolean windowIsEnabled) {
-		this.windowIsEnabled = windowIsEnabled;
-	}
-
-	public void setStatusDisplay(String statusDisplay) {
-		this.statusDisplay = statusDisplay;
-	}
-
-	public boolean isStatusIsInRed() {
-		return statusIsInRed;
-	}
-
-	public void setStatusIsInRed(boolean statusIsInRed) {
-		this.statusIsInRed = statusIsInRed;
-	}
-
-	public boolean isParticipantHasStatusWindow() {
-		return participantHasStatusWindow;
-	}
-
-	public void setParticipantHasStatusWindow(boolean participantHasStatusWindow) {
-		this.participantHasStatusWindow = participantHasStatusWindow;
-	}
-
-	public long getTimeOfLastScroll() {
-		return timeOfLastScroll;
-	}
-
-	public void setTimeOfLastScroll(long timeOfLastScroll) {
-		this.timeOfLastScroll = timeOfLastScroll;
-	}
-
+	
 	public String getExperimentClassName() {
 		return experimentClassName;
 	}
