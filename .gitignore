@@ -2,3 +2,4 @@ bin
 .settings
 data
 swapfile
+.idea/workspace.xml
