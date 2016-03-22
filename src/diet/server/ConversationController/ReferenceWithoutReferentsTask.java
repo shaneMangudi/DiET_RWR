@@ -1,12 +1,12 @@
 package diet.server.ConversationController;
 
-import java.util.Arrays;
-import java.util.Vector;
-
 import diet.message.MessageChatTextFromClient;
 import diet.server.Conversation;
 import diet.server.Participant;
 import diet.textmanipulationmodules.CyclicRandomTextGenerators.IRandomParticipantIDGenerator;
+
+import java.util.Arrays;
+import java.util.Vector;
 
 public class ReferenceWithoutReferentsTask extends DefaultConversationController {
 	private static final String DIRECTOR_ID = "Director";
@@ -14,14 +14,6 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
 
 	private Participant director = null;
 	private Participant matcher = null;
-	
-	// Hacky hackety way of setting global config before object construction.
-	public static Conversation setupGlobalConfig(Conversation conversation) {
-		config.param_experimentID = "ReferenceWithoutReferentsTask";
-		config.client_turnDisplayLimit = 2;
-		
-		return conversation;
-	}
 
 	public ReferenceWithoutReferentsTask(Conversation conversation) {
 		super(setupGlobalConfig(conversation));
@@ -37,11 +29,17 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
 		};
 	}
 
+	// Hacky hackety way of setting global config before object construction.
+	public static Conversation setupGlobalConfig(Conversation conversation) {
+		config.param_experimentID = "ReferenceWithoutReferentsTask";
+		config.client_turnDisplayLimit = 2;
+
+		return conversation;
+	}
+
 	@Override
 	public boolean requestParticipantJoinConversation(String participantID) {
-		if (participantID.equals(DIRECTOR_ID)) return director == null;
-		if (participantID.equals(MATCHER_ID)) return matcher == null;
-		return false;
+		return (participantID.equals(DIRECTOR_ID) && director == null) || (participantID.equals(MATCHER_ID) && matcher == null);
 	}
 
 	@Override
