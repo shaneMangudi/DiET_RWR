@@ -23,10 +23,10 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static javax.swing.SwingUtilities.convertPoint;
 
-public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
+class ReferenceWithoutReferentsTaskJFrame extends JFrame {
     private final Map<ImageIcon, Integer> cards = new HashMap<>();
 
-    public ReferenceWithoutReferentsTaskJFrame(ReferenceWithoutReferentsTask.PlayerType playerType, int numberOfCards) {
+    ReferenceWithoutReferentsTaskJFrame(ReferenceWithoutReferentsTask.PlayerType playerType, int numberOfCards) {
         super(playerType.name());
 
         this.setLayout(new FlowLayout());
