@@ -46,7 +46,7 @@ class ReferenceWithoutReferentsTaskJFrame extends JFrame {
             ImageIcon imageIcon = new ImageIcon(getSystemResource("rwr/" + cardClass + "/" + id + ".png"));
             cards.put(imageIcon, id);
             JLabel jLabel = new JLabel(imageIcon, JLabel.CENTER);
-            jLabel.setBorder(BorderFactory.createLineBorder(Color.black));
+            jLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             jLabel.addMouseListener(cardDragHandler);
             jLabel.addMouseMotionListener(cardDragHandler);
             this.add(jLabel);
@@ -66,7 +66,7 @@ class ReferenceWithoutReferentsTaskJFrame extends JFrame {
     }
 
     private void onDrag() {
-        connectionToServer.sendMessage(new ReferenceWithoutReferentsCardMoveMessage(playerType, this.getOrderedListOfCardIds()));
+        connectionToServer.sendMessage(new ReferenceWithoutReferentsCardMoveMessage(playerType, getOrderedListOfCardIds()));
     }
 }
 
