@@ -26,14 +26,14 @@ import static javax.swing.SwingUtilities.convertPoint;
 class ReferenceWithoutReferentsTaskJFrame extends JFrame {
     private final Map<ImageIcon, Integer> cards = new HashMap<>();
 
-    ReferenceWithoutReferentsTaskJFrame(ReferenceWithoutReferentsTask.PlayerType playerType, int numberOfCards) {
+    ReferenceWithoutReferentsTaskJFrame(ReferenceWithoutReferentsTask.PlayerType playerType, int numberOfCards, ConnectionToServer connectionToServer) {
         super(playerType.name());
 
         this.setLayout(new FlowLayout());
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
         String cardClass = playerType.name().toLowerCase();
-        CardDragHandler cardDragHandler = new CardDragHandler(this.getContentPane());
+        CardDragHandler cardDragHandler = new CardDragHandler(this.getContentPane(), connectionToServer);
 
         for (int id = 1; id <= numberOfCards; ++id) {
             ImageIcon imageIcon = new ImageIcon(getSystemResource("rwr/" + cardClass + "/" + id + ".png"));
@@ -61,9 +61,11 @@ class ReferenceWithoutReferentsTaskJFrame extends JFrame {
 
 class CardDragHandler extends MouseAdapter {
     private final Container container;
+    private final ConnectionToServer connectionToServer;
 
-    CardDragHandler(Container container) {
+    CardDragHandler(Container container, ConnectionToServer connectionToServer) {
         this.container = container;
+        this.connectionToServer = connectionToServer;
     }
 
     @Override
@@ -79,6 +81,7 @@ class CardDragHandler extends MouseAdapter {
             Icon targetIcon = targetJLabel.getIcon();
             targetJLabel.setIcon(jLabel.getIcon());
             jLabel.setIcon(targetIcon);
+            // connectionToServer.sendMessage(null);
         }
         container.setCursor(Cursor.getDefaultCursor());
     }

@@ -341,7 +341,7 @@ public class ConnectionToServer extends Thread {
                     ReferenceWithoutReferentsTaskMessage taskMessage = (ReferenceWithoutReferentsTaskMessage) m;
                     if (taskMessage.getMessageType() == ReferenceWithoutReferentsTaskMessage.MessageType.START) {
                         ReferenceWithoutReferentsStartMessage startMessage = (ReferenceWithoutReferentsStartMessage) taskMessage;
-                        referenceWithoutReferentsTaskJFrame = new ReferenceWithoutReferentsTaskJFrame(startMessage.getPlayerType(), startMessage.getNumberOfCards());
+                        referenceWithoutReferentsTaskJFrame = new ReferenceWithoutReferentsTaskJFrame(startMessage.getPlayerType(), startMessage.getNumberOfCards(), this);
                     }
                 }
 
