@@ -1,6 +1,5 @@
 package diet.client.rwr;
 
-
 import diet.server.ConversationController.ReferenceWithoutReferentsTask.PlayerType;
 import java.awt.FlowLayout;
 import java.util.HashMap;

@@ -1,6 +1,5 @@
 package diet.client.rwr;
 
-
 import java.awt.FlowLayout;
 import java.awt.event.ItemListener;
 import javax.swing.JPanel;
