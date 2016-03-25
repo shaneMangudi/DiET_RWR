@@ -9,31 +9,36 @@ import java.awt.FlowLayout;
 import java.awt.dnd.DragSource;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
+import static java.lang.ClassLoader.getSystemResource;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static javax.swing.SwingUtilities.convertPoint;
 
 public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
-    private final List<Card> cards = new ArrayList<>();
+    private final Map<ImageIcon, Integer> cards = new HashMap<>();
 
     public ReferenceWithoutReferentsTaskJFrame(ReferenceWithoutReferentsTask.PlayerType playerType, int numberOfCards) {
         super(playerType.name());
+
         this.setLayout(new FlowLayout());
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        CardDragHandler cardDragHandler = new CardDragHandler(this.getRootPane().getContentPane());
+        String cardClass = playerType.name().toLowerCase();
+        CardDragHandler cardDragHandler = new CardDragHandler(this.getContentPane());
 
-        for (int i = 1; i <= numberOfCards; ++i) {
-            Card card = new Card(playerType, i);
-            cards.add(card);
-            JLabel jLabel = new JLabel(card.getImageIcon(), JLabel.CENTER);
+        for (int id = 1; id <= numberOfCards; ++id) {
+            ImageIcon imageIcon = new ImageIcon(getSystemResource("rwr/" + cardClass + "/" + id + ".png"));
+            cards.put(imageIcon, id);
+            JLabel jLabel = new JLabel(imageIcon, JLabel.CENTER);
             jLabel.setBorder(BorderFactory.createLineBorder(Color.black));
             jLabel.addMouseListener(cardDragHandler);
             jLabel.addMouseMotionListener(cardDragHandler);
@@ -45,25 +50,12 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
     }
 
     public List<Integer> getCardIdsOrdered() {
-        return cards.stream().map(Card::getId).collect(toList());
-    }
-
-    private class Card {
-        private final ImageIcon image;
-        private final int id;
-
-        Card(ReferenceWithoutReferentsTask.PlayerType playerType, int id) {
-            this.image = new ImageIcon(ClassLoader.getSystemResource("rwr/" + playerType.name().toLowerCase() + "/" + id + ".png"));
-            this.id = id;
-        }
-
-        int getId() {
-            return id;
-        }
-
-        ImageIcon getImageIcon() {
-            return image;
-        }
+        return asList(this.getContentPane().getComponents())
+                .stream()
+                .map(component -> (JLabel) component)
+                .map(JLabel::getIcon)
+                .map(cards::get)
+                .collect(toList());
     }
 }
 
