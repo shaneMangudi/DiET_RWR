@@ -1,7 +1,10 @@
 package diet.server.ConversationController;
 
 import diet.message.MessageChatTextFromClient;
+import diet.message.MessageTask;
+import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsCardMoveMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsStartMessage;
+import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsTaskMessage;
 import diet.server.Conversation;
 import diet.server.Participant;
 import diet.textmanipulationmodules.CyclicRandomTextGenerators.IRandomParticipantIDGenerator;
@@ -31,7 +34,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     }
 
     // Hacky hackety way of setting global config before object construction.
-    public static Conversation setupGlobalConfig(Conversation conversation) {
+    private static Conversation setupGlobalConfig(Conversation conversation) {
         config.param_experimentID = "ReferenceWithoutReferentsTask";
         config.client_turnDisplayLimit = 2;
 
@@ -69,6 +72,23 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     public synchronized void processChatText(Participant sender, MessageChatTextFromClient messageChatTextFromClient) {
         super.processChatText(sender, messageChatTextFromClient);
         conversation.newrelayTurnToPermittedParticipants(sender, messageChatTextFromClient);
+    }
+
+    @Override
+    public synchronized void processTaskMove(MessageTask messageTask, Participant participant) {
+        super.processTaskMove(messageTask, participant);
+        if (!(messageTask instanceof ReferenceWithoutReferentsTaskMessage)) return;
+
+        ReferenceWithoutReferentsTaskMessage rwrMessageTask = (ReferenceWithoutReferentsTaskMessage) messageTask;
+        switch (rwrMessageTask.getMessageType()) {
+            case CARD_MOVE:
+                ReferenceWithoutReferentsCardMoveMessage cardMoveMessage = (ReferenceWithoutReferentsCardMoveMessage) rwrMessageTask;
+                // TODO: Save this information into the logs.
+                System.out.println(cardMoveMessage.getPlayerType() + ": " + cardMoveMessage.getOrderedListOfCardIds());
+                return;
+            default:
+                throw new RuntimeException("Unexpected ReferenceWithoutReferents task message type: " + messageTask);
+        }
     }
 
     public enum PlayerType {

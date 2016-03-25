@@ -1,14 +1,14 @@
 package diet.message.referenceWithoutReferentsTask;
 
-import diet.message.Message;
+import diet.message.MessageTask;
 
-public class ReferenceWithoutReferentsTaskMessage extends Message {
+public class ReferenceWithoutReferentsTaskMessage extends MessageTask {
     private static final String EMAIL = "server";
     private static final String USERNAME = "";
 
     private final MessageType messageType;
 
-    public ReferenceWithoutReferentsTaskMessage(MessageType messageType) {
+    ReferenceWithoutReferentsTaskMessage(MessageType messageType) {
         super(EMAIL, USERNAME);
         this.messageType = messageType;
     }
@@ -18,6 +18,7 @@ public class ReferenceWithoutReferentsTaskMessage extends Message {
     }
 
     public enum MessageType {
-        START
+        START,
+        CARD_MOVE
     }
 }
