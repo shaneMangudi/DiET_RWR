@@ -19,6 +19,7 @@ public class ReferenceWithoutReferentsTaskMessage extends MessageTask {
 
     public enum MessageType {
         START,
-        CARD_MOVE
+        CARD_MOVE,
+        READY_STATE
     }
 }

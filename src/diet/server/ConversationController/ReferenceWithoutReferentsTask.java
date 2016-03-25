@@ -3,6 +3,7 @@ package diet.server.ConversationController;
 import diet.message.MessageChatTextFromClient;
 import diet.message.MessageTask;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsCardMoveMessage;
+import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsReadyStateMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsStartMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsTaskMessage;
 import diet.server.Conversation;
@@ -85,6 +86,11 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                 ReferenceWithoutReferentsCardMoveMessage cardMoveMessage = (ReferenceWithoutReferentsCardMoveMessage) rwrMessageTask;
                 // TODO: Save this information into the logs.
                 System.out.println(cardMoveMessage.getPlayerType() + ": " + cardMoveMessage.getOrderedListOfCardIds());
+                return;
+            case READY_STATE:
+                ReferenceWithoutReferentsReadyStateMessage readyStateMessage = (ReferenceWithoutReferentsReadyStateMessage) rwrMessageTask;
+                // TODO: Save this information into the logs.
+                System.out.println(readyStateMessage.getPlayerType() + ": " + readyStateMessage.getReadyState());
                 return;
             default:
                 throw new RuntimeException("Unexpected ReferenceWithoutReferents task message type: " + messageTask);

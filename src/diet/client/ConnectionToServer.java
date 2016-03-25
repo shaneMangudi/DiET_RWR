@@ -1,5 +1,6 @@
 package diet.client;
 
+import diet.client.rwr.ReferenceWithoutReferentsTaskJFrame;
 import diet.message.Keypress;
 import diet.message.Message;
 import diet.message.MessageChangeClientInterfaceProperties;
