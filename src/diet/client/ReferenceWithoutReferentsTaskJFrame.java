@@ -1,7 +1,8 @@
 package diet.client;
 
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsCardMoveMessage;
-import diet.server.ConversationController.ReferenceWithoutReferentsTask;
+import diet.server.ConversationController.ReferenceWithoutReferentsTask.PlayerType;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -16,8 +17,10 @@ import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import static java.lang.ClassLoader.getSystemResource;
 import static java.util.Arrays.asList;
@@ -25,22 +28,31 @@ import static java.util.stream.Collectors.toList;
 import static javax.swing.SwingUtilities.convertPoint;
 
 class ReferenceWithoutReferentsTaskJFrame extends JFrame {
-    private final Map<ImageIcon, Integer> cards;
+    private final PlayerType playerType;
     private final ConnectionToServer connectionToServer;
-    private final ReferenceWithoutReferentsTask.PlayerType playerType;
+    private final JPanel cardsPanel = new JPanel();
+    private final JCheckBox statusCheckbox = new JCheckBox("Ready");
+    private final Map<ImageIcon, Integer> cards = new HashMap<>();
 
-    ReferenceWithoutReferentsTaskJFrame(ReferenceWithoutReferentsTask.PlayerType playerType, int numberOfCards, ConnectionToServer connectionToServer) {
+    ReferenceWithoutReferentsTaskJFrame(PlayerType playerType, int numberOfCards, ConnectionToServer connectionToServer) {
         super(playerType.name());
 
-        this.cards = new HashMap<>();
         this.connectionToServer = connectionToServer;
         this.playerType = playerType;
 
-        this.setLayout(new FlowLayout());
+        this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
+        cardsPanel.setLayout(new FlowLayout());
+        this.add(cardsPanel, BorderLayout.NORTH);
+
+        JPanel controlsPanel = new JPanel();
+        controlsPanel.setLayout(new FlowLayout());
+        controlsPanel.add(statusCheckbox);
+        this.add(controlsPanel, BorderLayout.SOUTH);
+
         String cardClass = playerType.name().toLowerCase();
-        CardDragHandler cardDragHandler = new CardDragHandler(this.getContentPane(), this::onDrag);
+        CardDragHandler cardDragHandler = new CardDragHandler(cardsPanel, this::onDrag);
 
         for (int id = 1; id <= numberOfCards; ++id) {
             ImageIcon imageIcon = new ImageIcon(getSystemResource("rwr/" + cardClass + "/" + id + ".png"));
@@ -49,7 +61,7 @@ class ReferenceWithoutReferentsTaskJFrame extends JFrame {
             jLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             jLabel.addMouseListener(cardDragHandler);
             jLabel.addMouseMotionListener(cardDragHandler);
-            this.add(jLabel);
+            cardsPanel.add(jLabel);
         }
 
         this.pack();
@@ -57,7 +69,7 @@ class ReferenceWithoutReferentsTaskJFrame extends JFrame {
     }
 
     private List<Integer> getOrderedListOfCardIds() {
-        return asList(this.getContentPane().getComponents())
+        return asList(cardsPanel.getComponents())
                 .stream()
                 .map(component -> (JLabel) component)
                 .map(JLabel::getIcon)
