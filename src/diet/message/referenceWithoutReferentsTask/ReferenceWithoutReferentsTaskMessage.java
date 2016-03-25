@@ -1,9 +1,11 @@
-package diet.message;
+package diet.message.referenceWithoutReferentsTask;
+
+import diet.message.Message;
 
 public class ReferenceWithoutReferentsTaskMessage extends Message {
-    public static final ReferenceWithoutReferentsTaskMessage START = new ReferenceWithoutReferentsTaskMessage(MessageType.START);
     private static final String EMAIL = "server";
     private static final String USERNAME = "";
+
     private final MessageType messageType;
 
     public ReferenceWithoutReferentsTaskMessage(MessageType messageType) {

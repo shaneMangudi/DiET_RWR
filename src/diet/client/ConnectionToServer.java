@@ -1,6 +1,44 @@
 package diet.client;
 
-import diet.message.*;
+import diet.message.Keypress;
+import diet.message.Message;
+import diet.message.MessageChangeClientInterfaceProperties;
+import diet.message.MessageChatTextFromClient;
+import diet.message.MessageChatTextToClient;
+import diet.message.MessageClientCloseDown;
+import diet.message.MessageClientLogon;
+import diet.message.MessageClientSetupParameters;
+import diet.message.MessageClientSetupParametersWithSendButtonAndTextEntryOneTurnAtATime;
+import diet.message.MessageClientSetupParametersWithSendButtonAndTextEntryWidthByHeight;
+import diet.message.MessageClientSetupSuccessful;
+import diet.message.MessageDisplayChangeJProgressBar;
+import diet.message.MessageDisplayChangeWebpage;
+import diet.message.MessageDisplayCloseWindow;
+import diet.message.MessageDisplayNEWWebpage;
+import diet.message.MessageDummy;
+import diet.message.MessageErrorFromClient;
+import diet.message.MessageGridImageStimuliSelectionToClient;
+import diet.message.MessageGridImagesStimuliChangeImages;
+import diet.message.MessageGridImagesStimuliSendSetToClient;
+import diet.message.MessageGridTextStimuliChangeTexts;
+import diet.message.MessageGridTextStimuliInitialize;
+import diet.message.MessageGridTextStimuliSelectionToClient;
+import diet.message.MessageKeypressed;
+import diet.message.MessageOpenClientBrowserWebpage;
+import diet.message.MessagePopup;
+import diet.message.MessagePopupClientLogonEmailRequest;
+import diet.message.MessagePopupClientLogonUsernameRequest;
+import diet.message.MessagePopupResponseFromClient;
+import diet.message.MessageStimulusImageChangeImage;
+import diet.message.MessageStimulusImageDisplayNewJFrame;
+import diet.message.MessageSubliminalStimuliChangeImage;
+import diet.message.MessageSubliminalStimuliDisplayText;
+import diet.message.MessageSubliminalStimuliSendSetToClient;
+import diet.message.MessageTask;
+import diet.message.MessageWYSIWYGDocumentSyncFromClientInsert;
+import diet.message.MessageWYSIWYGDocumentSyncFromClientRemove;
+import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsStartMessage;
+import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsTaskMessage;
 import diet.server.Conversation;
 import diet.server.ConversationController.DefaultConversationController;
 import diet.server.ConversationController.ui.OpenInBrowser;
@@ -13,8 +51,6 @@ import diet.task.mazegame.ClientMazeGameComms;
 import diet.task.mazegame.message.MessageNewMazeGame;
 import diet.task.tangram2D1M.ClientTangramGameComms;
 import diet.task.tangram2D1M.message.MessageNewTangrams;
-
-import javax.swing.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -23,6 +59,8 @@ import java.net.SocketAddress;
 import java.util.Date;
 import java.util.Random;
 import java.util.Vector;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  * This deals with low-level network communication with server. It exchanges
@@ -302,7 +340,8 @@ public class ConnectionToServer extends Thread {
                 if (m instanceof ReferenceWithoutReferentsTaskMessage) {
                     ReferenceWithoutReferentsTaskMessage taskMessage = (ReferenceWithoutReferentsTaskMessage) m;
                     if (taskMessage.getMessageType() == ReferenceWithoutReferentsTaskMessage.MessageType.START) {
-                        referenceWithoutReferentsTaskJFrame = new ReferenceWithoutReferentsTaskJFrame();
+                        ReferenceWithoutReferentsStartMessage startMessage = (ReferenceWithoutReferentsStartMessage) taskMessage;
+                        referenceWithoutReferentsTaskJFrame = new ReferenceWithoutReferentsTaskJFrame(startMessage.getPlayerType(), startMessage.getNumberOfCards());
                     }
                 }
 
@@ -719,9 +758,9 @@ public class ConnectionToServer extends Thread {
                 || version.startsWith("1.4") || version.startsWith("1.5") || version.startsWith("1.6")) {
             this.sendErrorMessage(email + ": " + username + " is using java version: " + version + "\n");
         }
-        if (version.startsWith("1.8")) {
+        /*if (version.startsWith("1.8")) {
             this.sendErrorMessage(email + ": " + username + " is using java version: " + version + "\n");
-        }
+        }*/
         // this.sendErrorMessage(email+": "+username+" THERE IS NOTING TO WORRY
         // ABOUT"+"\n");
     }

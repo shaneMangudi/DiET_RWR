@@ -9,19 +9,15 @@
 
 package diet.server.experimentmanager;
 
-import javax.swing.UIManager;
-
 import diet.client.ConnectionToServer;
 import diet.gui.lookandfeel.JNimbusProgressBar;
 import diet.gui.lookandfeel.JProgressBarFillPainter;
-
 import diet.server.Conversation;
 import diet.server.ConversationController.ClassLoader.ClassLoad;
 import diet.server.ConversationController.DefaultConversationController;
 import diet.server.ConversationController.ui.CustomDialog;
 import diet.server.ExperimentManager;
 import diet.server.demomode.DemoModeChecker;
-import diet.server.experimentmanager.ui.JEMStarter;
 import diet.server.experimentmanager.ui.JEMStarter111;
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -31,6 +27,7 @@ import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.plaf.ColorUIResource;
 import javax.swing.plaf.basic.BasicProgressBarUI;
@@ -42,12 +39,7 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
  */
 public class EMStarter {
 
-	/**
-	 * Creates a new instance of EMTester
-	 */
-	public EMStarter() {
-
-	}
+	public static String[] args;
 
 	/*
 	 * static public void beanshellTester(){ try{ Interpreter i = new
@@ -72,14 +64,21 @@ public class EMStarter {
 	 * 
 	 * }
 	 */
+	static File chattooljar = null;
+	static boolean runningAsEXE = false;
 
-	public static String[] args;
+	// public static int portNumberFOREMSTARTERGUI = 20000;
+
+	/**
+	 * Creates a new instance of EMTester
+	 */
+	public EMStarter() {
+
+	}
 
 	public static void startNOGUI(String f) {
 
 	}
-
-	// public static int portNumberFOREMSTARTERGUI = 20000;
 
 	public static void startClient(String ipAddress, String portNumber) {
 		try {
@@ -140,15 +139,13 @@ public class EMStarter {
 							+ "You can proceed with running the chat tool, but unless you know\n"
 							+ "what you're doing, you will almost certainly get runtime errors\n");
 		}
-		if (version.startsWith("1.8")) {
+		/*if (version.startsWith("1.8")) {
 			CustomDialog.showDialog("WARNING!\nThis program is being run with java 1.8\n"
 
 					+ "Currently Java 1.8 is unstable and leads to nondeterministic behaviour\n"
 					+ "Please make sure you downgrade to java 1.7");
-		}
+		}*/
 	}
-
-	static File chattooljar = null;
 
 	public static void testJARLOADER() {
 		String s = System.getProperty("user.dir");
@@ -188,8 +185,6 @@ public class EMStarter {
 		// System.exit(-5);
 
 	}
-
-	static boolean runningAsEXE = false;
 
 	public static void checkName(String[] args2) {
 		if (args2 == null)
@@ -457,7 +452,7 @@ public class EMStarter {
 			if (args[0].equalsIgnoreCase("nogui_ccname") || args[0].equalsIgnoreCase("nogui_ccname_autologin")) {
 				Conversation c = em.createAndActivateNewExperiment(args[1]);
 
-				numberOfClients = c.getController().config.login_numberOfParticipants;
+				numberOfClients = DefaultConversationController.config.login_numberOfParticipants;
 			} else {
 				// no longer necessary
 			}

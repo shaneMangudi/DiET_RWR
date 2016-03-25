@@ -1,21 +1,63 @@
 package diet.client;
 
-import javax.swing.*;
-import java.awt.*;
+import diet.server.ConversationController.ReferenceWithoutReferentsTask;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.WindowConstants;
+import static java.util.stream.Collectors.toList;
 
 public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
-    public ReferenceWithoutReferentsTaskJFrame() {
-        setVisible(true);
-    }
-}
+    private static final MouseAdapter CARD_DRAG_HANDLER = new MouseAdapter() {
+        @Override
+        public void mouseDragged(MouseEvent mouseEvent) {
+            JLabel jLabel = (JLabel) mouseEvent.getSource();
+            if (getTargetJLabel(mouseEvent) != null) {
+                jLabel.getParent().setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+            } else {
+                jLabel.getParent().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        }
 
-class DragMouseAdapter extends MouseAdapter {
-    private JFrame frame;
+        @Override
+        public void mouseReleased(MouseEvent mouseEvent) {
+            JLabel jLabel = (JLabel) mouseEvent.getSource();
+            JLabel targetJLabel = getTargetJLabel(mouseEvent);
+            if (targetJLabel != null) {
+                Icon targetIcon = targetJLabel.getIcon();
+                targetJLabel.setIcon(jLabel.getIcon());
+                jLabel.setIcon(targetIcon);
+            }
+            jLabel.getParent().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        }
+    };
 
-    public DragMouseAdapter(JFrame frame) {
-        this.frame = frame;
+    private final List<Card> cards = new ArrayList<>();
+
+    public ReferenceWithoutReferentsTaskJFrame(ReferenceWithoutReferentsTask.PlayerType playerType, int numberOfCards) {
+        super(playerType.name());
+        this.setLayout(new FlowLayout());
+        this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+        for (int i = 1; i <= numberOfCards; ++i) {
+            Card card = new Card(playerType, i);
+            cards.add(card);
+            JLabel jLabel = new JLabel(card.getImageIcon(), JLabel.CENTER);
+            jLabel.addMouseListener(CARD_DRAG_HANDLER);
+            jLabel.addMouseMotionListener(CARD_DRAG_HANDLER);
+            this.add(jLabel);
+        }
+
+        this.pack();
+        this.setVisible(true);
     }
 
     private static JLabel getTargetJLabel(MouseEvent mouseEvent) {
@@ -27,55 +69,25 @@ class DragMouseAdapter extends MouseAdapter {
         return null;
     }
 
-    @Override
-    public void mouseDragged(MouseEvent mouseEvent) {
-        if (getTargetJLabel(mouseEvent) != null) {
-            frame.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        } else {
-            frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        }
+    public List<Integer> getCardIdsOrdered() {
+        return cards.stream().map(Card::getId).collect(toList());
     }
 
-    @Override
-    public void mouseReleased(MouseEvent mouseEvent) {
-        JLabel jLabel = (JLabel) mouseEvent.getSource();
-        JLabel targetJLabel = getTargetJLabel(mouseEvent);
-        if (targetJLabel != null) {
-            Icon targetIcon = targetJLabel.getIcon();
-            targetJLabel.setIcon(jLabel.getIcon());
-            jLabel.setIcon(targetIcon);
+    private class Card {
+        private final ImageIcon image;
+        private final int id;
+
+        Card(ReferenceWithoutReferentsTask.PlayerType playerType, int id) {
+            this.image = new ImageIcon(ClassLoader.getSystemResource("rwr/" + playerType.name().toLowerCase() + "/" + id + ".png"));
+            this.id = id;
         }
-        frame.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-    }
 
-}
+        int getId() {
+            return id;
+        }
 
-class IconDnD {
-    public static void main(String[] args) {
-        JFrame f = new JFrame("Icon Drag & Drop");
-        ImageIcon icon1 = new ImageIcon(ClassLoader.getSystemResource("rwr/director/1.png"));
-        ImageIcon icon2 = new ImageIcon(ClassLoader.getSystemResource("rwr/director/2.png"));
-        ImageIcon icon3 = new ImageIcon(ClassLoader.getSystemResource("rwr/director/3.png"));
-
-        JLabel label1 = new JLabel(icon1, JLabel.CENTER);
-        JLabel label2 = new JLabel(icon2, JLabel.CENTER);
-        JLabel label3 = new JLabel(icon3, JLabel.CENTER);
-
-        DragMouseAdapter listener = new DragMouseAdapter(f);
-        label1.addMouseListener(listener);
-        label1.addMouseMotionListener(listener);
-        label2.addMouseListener(listener);
-        label2.addMouseMotionListener(listener);
-        label3.addMouseListener(listener);
-        label3.addMouseMotionListener(listener);
-
-        f.setLayout(new FlowLayout());
-        f.add(label1);
-        f.add(label2);
-        f.add(label3);
-        f.pack();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        f.setVisible(true);
+        ImageIcon getImageIcon() {
+            return image;
+        }
     }
 }
