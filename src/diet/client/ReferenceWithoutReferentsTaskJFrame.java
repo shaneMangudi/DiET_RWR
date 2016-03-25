@@ -1,6 +1,7 @@
 package diet.client;
 
 import diet.server.ConversationController.ReferenceWithoutReferentsTask;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
@@ -10,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -32,6 +34,7 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
             Card card = new Card(playerType, i);
             cards.add(card);
             JLabel jLabel = new JLabel(card.getImageIcon(), JLabel.CENTER);
+            jLabel.setBorder(BorderFactory.createLineBorder(Color.black));
             jLabel.addMouseListener(cardDragHandler);
             jLabel.addMouseMotionListener(cardDragHandler);
             this.add(jLabel);
