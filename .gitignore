@@ -2,5 +2,5 @@ bin
 .settings
 data
 swapfile
-.idea/workspace.xml
+.idea/workspace.xml*
 .idea/codeStyleSettings.xml
