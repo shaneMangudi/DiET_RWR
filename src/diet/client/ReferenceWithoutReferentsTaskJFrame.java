@@ -2,8 +2,10 @@ package diet.client;
 
 import diet.server.ConversationController.ReferenceWithoutReferentsTask;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.FlowLayout;
+import java.awt.dnd.DragSource;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -14,32 +16,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 import static java.util.stream.Collectors.toList;
+import static javax.swing.SwingUtilities.convertPoint;
 
 public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
-    private static final MouseAdapter CARD_DRAG_HANDLER = new MouseAdapter() {
-        @Override
-        public void mouseDragged(MouseEvent mouseEvent) {
-            JLabel jLabel = (JLabel) mouseEvent.getSource();
-            if (getTargetJLabel(mouseEvent) != null) {
-                jLabel.getParent().setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-            } else {
-                jLabel.getParent().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-            }
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent mouseEvent) {
-            JLabel jLabel = (JLabel) mouseEvent.getSource();
-            JLabel targetJLabel = getTargetJLabel(mouseEvent);
-            if (targetJLabel != null) {
-                Icon targetIcon = targetJLabel.getIcon();
-                targetJLabel.setIcon(jLabel.getIcon());
-                jLabel.setIcon(targetIcon);
-            }
-            jLabel.getParent().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        }
-    };
-
     private final List<Card> cards = new ArrayList<>();
 
     public ReferenceWithoutReferentsTaskJFrame(ReferenceWithoutReferentsTask.PlayerType playerType, int numberOfCards) {
@@ -47,26 +26,19 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
         this.setLayout(new FlowLayout());
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
+        CardDragHandler cardDragHandler = new CardDragHandler(this.getRootPane().getContentPane());
+
         for (int i = 1; i <= numberOfCards; ++i) {
             Card card = new Card(playerType, i);
             cards.add(card);
             JLabel jLabel = new JLabel(card.getImageIcon(), JLabel.CENTER);
-            jLabel.addMouseListener(CARD_DRAG_HANDLER);
-            jLabel.addMouseMotionListener(CARD_DRAG_HANDLER);
+            jLabel.addMouseListener(cardDragHandler);
+            jLabel.addMouseMotionListener(cardDragHandler);
             this.add(jLabel);
         }
 
         this.pack();
         this.setVisible(true);
-    }
-
-    private static JLabel getTargetJLabel(MouseEvent mouseEvent) {
-        JLabel jLabel = (JLabel) mouseEvent.getSource();
-        Component targetComponent = jLabel.getParent().getComponentAt(mouseEvent.getLocationOnScreen());
-        if (targetComponent instanceof JLabel && !targetComponent.equals(jLabel)) {
-            return (JLabel) targetComponent;
-        }
-        return null;
     }
 
     public List<Integer> getCardIdsOrdered() {
@@ -89,5 +61,39 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
         ImageIcon getImageIcon() {
             return image;
         }
+    }
+}
+
+class CardDragHandler extends MouseAdapter {
+    private final Container container;
+
+    CardDragHandler(Container container) {
+        this.container = container;
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent mouseEvent) {
+        container.setCursor((getTargetJLabel(mouseEvent) != null) ? DragSource.DefaultMoveDrop : DragSource.DefaultMoveNoDrop);
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {
+        JLabel jLabel = (JLabel) mouseEvent.getSource();
+        JLabel targetJLabel = getTargetJLabel(mouseEvent);
+        if (targetJLabel != null) {
+            Icon targetIcon = targetJLabel.getIcon();
+            targetJLabel.setIcon(jLabel.getIcon());
+            jLabel.setIcon(targetIcon);
+        }
+        container.setCursor(Cursor.getDefaultCursor());
+    }
+
+    private JLabel getTargetJLabel(MouseEvent mouseEvent) {
+        JLabel jLabel = (JLabel) mouseEvent.getSource();
+        Component targetComponent = container.getComponentAt(convertPoint(jLabel, mouseEvent.getPoint(), container));
+        if (targetComponent instanceof JLabel && !targetComponent.equals(jLabel)) {
+            return (JLabel) targetComponent;
+        }
+        return null;
     }
 }
