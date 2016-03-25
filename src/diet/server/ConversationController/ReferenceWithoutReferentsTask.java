@@ -39,12 +39,12 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     }
 
     @Override
-    public boolean requestParticipantJoinConversation(String participantID) {
+    public synchronized boolean requestParticipantJoinConversation(String participantID) {
         return (participantID.equals(DIRECTOR_ID) && director == null) || (participantID.equals(MATCHER_ID) && matcher == null);
     }
 
     @Override
-    public void participantJoinedConversation(Participant participant) {
+    public synchronized void participantJoinedConversation(Participant participant) {
         if (participant.getParticipantID().equals(DIRECTOR_ID)) {
             director = participant;
         } else if (participant.getParticipantID().equals(MATCHER_ID)) {
