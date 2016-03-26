@@ -142,7 +142,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                             conversation.newsendInstructionToMultipleParticipants(participants, "New game started.");
                         }
                     } else {
-                        conversation.newsendInstructionToMultipleParticipants(participants, mismatches + " mismatched. Turn failed.");
+                        conversation.newsendInstructionToMultipleParticipants(participants, mismatches + " mismatch(es). Turn failed.");
                         consecutiveWins = 0;
                     }
                 }
