@@ -116,7 +116,6 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
             case CARD_MOVE:
                 ReferenceWithoutReferentsCardMoveMessage cardMoveMessage = (ReferenceWithoutReferentsCardMoveMessage) rwrMessageTask;
                 orderedListOfCardIds.put(cardMoveMessage.getPlayerType(), cardMoveMessage.getOrderedListOfCardIds());
-                System.out.println(cardMoveMessage.getPlayerType() + ": " + cardMoveMessage.getOrderedListOfCardIds());
                 break;
             case READY_STATE:
                 ReferenceWithoutReferentsReadyStateMessage readyStateMessage = (ReferenceWithoutReferentsReadyStateMessage) rwrMessageTask;
