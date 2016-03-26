@@ -10,28 +10,42 @@ import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsTaskM
 import diet.server.Conversation;
 import diet.server.Participant;
 import diet.textmanipulationmodules.CyclicRandomTextGenerators.IRandomParticipantIDGenerator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Vector;
+import java.util.stream.IntStream;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 public class ReferenceWithoutReferentsTask extends DefaultConversationController {
-    private static final int REQUIRED_CONSECUTIVE_WINS = 3;
     private static final int NUMBER_OF_CARDS = 8;
-    private static final String DIRECTOR_ID = PlayerType.DIRECTOR.name();
+    private static final int REQUIRED_CONSECUTIVE_WINS = 3;
+    private static final boolean CARDS_RANDOM_MAPPING = false;
     private static final String MATCHER_ID = PlayerType.MATCHER.name();
-
-    private Participant director = null;
+    private static final String DIRECTOR_ID = PlayerType.DIRECTOR.name();
+    private final MismatchCounter mismatchCounter;
     private Participant matcher = null;
+    private Participant director = null;
     private Vector<Participant> participants = null;
-
-    private Map<PlayerType, List<Integer>> orderedListOfCardIds = new HashMap<>();
-    private Map<PlayerType, Boolean> readyStates = new HashMap<>();
     private int consecutiveWins = 0;
+    private Map<PlayerType, Boolean> readyStates = new HashMap<>();
+    private Map<PlayerType, List<Integer>> orderedListOfCardIds = new HashMap<>();
 
     public ReferenceWithoutReferentsTask(Conversation conversation) {
         super(setupGlobalConfig(conversation));
+
+        List<Integer> ids = IntStream.rangeClosed(1, NUMBER_OF_CARDS).boxed().collect(toList());
+        if (CARDS_RANDOM_MAPPING) {
+            List<Integer> copyOfIds = new ArrayList<>(ids);
+            Collections.shuffle(copyOfIds, new Random());
+            mismatchCounter = new MismatchCounter(ids, copyOfIds);
+        } else {
+            mismatchCounter = new MismatchCounter(ids, ids);
+        }
 
         DefaultConversationController.autologinParticipantIDGenerator = new IRandomParticipantIDGenerator() {
             boolean position = true;
@@ -137,17 +151,41 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     private int countMismatchedCards() {
         List<Integer> director = orderedListOfCardIds.get(PlayerType.DIRECTOR);
         List<Integer> matcher = orderedListOfCardIds.get(PlayerType.MATCHER);
-        int mismatches = 0;
-        for (int i = 0; i < NUMBER_OF_CARDS; ++i) {
-            if (!director.get(i).equals(matcher.get(i))) {
-                ++mismatches;
-            }
-        }
-        return mismatches;
+        return mismatchCounter.of(director, matcher);
     }
 
     public enum PlayerType {
         DIRECTOR,
         MATCHER
+    }
+
+    private static class MismatchCounter {
+        private final Map<Integer, Integer> idMappings;
+
+        MismatchCounter(List<Integer> keys, List<Integer> values) {
+            this(zip(keys, values));
+        }
+
+        MismatchCounter(Map<Integer, Integer> idMappings) {
+            this.idMappings = idMappings;
+        }
+
+        private static Map<Integer, Integer> zip(List<Integer> keys, List<Integer> values) {
+            Map<Integer, Integer> idMappings = new HashMap<>();
+            for (int i = 0; i < NUMBER_OF_CARDS; ++i) {
+                idMappings.put(keys.get(i), values.get(i));
+            }
+            return idMappings;
+        }
+
+        int of(List<Integer> director, List<Integer> matcher) {
+            int mismatches = 0;
+            for (int i = 0; i < NUMBER_OF_CARDS; ++i) {
+                if (!idMappings.get(director.get(i)).equals(matcher.get(i))) {
+                    ++mismatches;
+                }
+            }
+            return mismatches;
+        }
     }
 }
