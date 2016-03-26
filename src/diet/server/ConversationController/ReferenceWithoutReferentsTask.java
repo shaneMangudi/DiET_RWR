@@ -120,6 +120,8 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                             readyStates.put(PlayerType.MATCHER, false);
                             readyStates.put(PlayerType.DIRECTOR, false);
                             orderedListOfCardIds.clear();
+
+                            conversation.newsendInstructionToMultipleParticipants(participants, "New game started.");
                         }
                     } else {
                         conversation.newsendInstructionToMultipleParticipants(participants, mismatches + " mismatched. Turn failed.");
