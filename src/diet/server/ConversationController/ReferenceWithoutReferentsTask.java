@@ -63,6 +63,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     }
 
     // Hacky hackety way of setting global config before object construction.
+    // This method is found by ConnectionToServer reflectively and run to set up the config object.
     private static Conversation setupGlobalConfig(Conversation conversation) {
         config.param_experimentID = "ReferenceWithoutReferentsTask";
         config.client_turnDisplayLimit = 2;
