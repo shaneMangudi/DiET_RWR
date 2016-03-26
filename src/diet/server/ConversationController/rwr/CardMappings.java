@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MismatchCounter {
+public class CardMappings {
     private final Map<Integer, Integer> idMappings;
 
-    public MismatchCounter(List<Integer> keys, List<Integer> values) {
+    public CardMappings(List<Integer> keys, List<Integer> values) {
         this(zip(keys, values));
     }
 
-    private MismatchCounter(Map<Integer, Integer> idMappings) {
+    private CardMappings(Map<Integer, Integer> idMappings) {
         this.idMappings = idMappings;
     }
 
@@ -23,7 +23,7 @@ public class MismatchCounter {
         return idMappings;
     }
 
-    public int count(List<Integer> director, List<Integer> matcher) {
+    public int countMismatches(List<Integer> director, List<Integer> matcher) {
         int mismatches = 0;
         for (int i = 0; i < director.size(); ++i) {
             if (!idMappings.get(director.get(i)).equals(matcher.get(i))) {
