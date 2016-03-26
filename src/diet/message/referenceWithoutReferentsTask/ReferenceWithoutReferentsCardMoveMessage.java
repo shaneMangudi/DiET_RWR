@@ -1,6 +1,6 @@
 package diet.message.referenceWithoutReferentsTask;
 
-import diet.server.ConversationController.ReferenceWithoutReferentsTask.PlayerType;
+import diet.server.ConversationController.rwr.PlayerType;
 import java.util.List;
 
 public class ReferenceWithoutReferentsCardMoveMessage extends ReferenceWithoutReferentsTaskMessage {

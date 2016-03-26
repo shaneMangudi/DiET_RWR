@@ -1,6 +1,6 @@
 package diet.message.referenceWithoutReferentsTask;
 
-import diet.server.ConversationController.ReferenceWithoutReferentsTask.PlayerType;
+import diet.server.ConversationController.rwr.PlayerType;
 
 public class ReferenceWithoutReferentsSetupMessage extends ReferenceWithoutReferentsTaskMessage {
     private final PlayerType playerType;

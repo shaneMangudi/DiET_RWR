@@ -3,7 +3,7 @@ package diet.client.rwr;
 import diet.client.ConnectionToServer;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsCardMoveMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsReadyStateMessage;
-import diet.server.ConversationController.ReferenceWithoutReferentsTask.PlayerType;
+import diet.server.ConversationController.rwr.PlayerType;
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import javax.swing.JFrame;

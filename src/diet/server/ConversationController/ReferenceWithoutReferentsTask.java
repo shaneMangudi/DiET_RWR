@@ -8,6 +8,8 @@ import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsReset
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsSetupMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsTaskMessage;
 import diet.server.Conversation;
+import diet.server.ConversationController.rwr.MismatchCounter;
+import diet.server.ConversationController.rwr.PlayerType;
 import diet.server.Participant;
 import diet.textmanipulationmodules.CyclicRandomTextGenerators.IRandomParticipantIDGenerator;
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 import java.util.stream.IntStream;
+import static diet.server.ConversationController.rwr.PlayerType.DIRECTOR;
+import static diet.server.ConversationController.rwr.PlayerType.MATCHER;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
@@ -25,15 +29,15 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     private static final int NUMBER_OF_CARDS = 8;
     private static final int REQUIRED_CONSECUTIVE_WINS = 3;
     private static final boolean CARDS_RANDOM_MAPPING = false;
-    private static final String MATCHER_ID = PlayerType.MATCHER.name();
-    private static final String DIRECTOR_ID = PlayerType.DIRECTOR.name();
+    private static final String MATCHER_ID = MATCHER.name();
+    private static final String DIRECTOR_ID = DIRECTOR.name();
     private final MismatchCounter mismatchCounter;
+    private final Map<PlayerType, Boolean> readyStates = new HashMap<>();
+    private final Map<PlayerType, List<Integer>> orderedListOfCardIds = new HashMap<>();
     private Participant matcher = null;
     private Participant director = null;
     private Vector<Participant> participants = null;
     private int consecutiveWins = 0;
-    private Map<PlayerType, Boolean> readyStates = new HashMap<>();
-    private Map<PlayerType, List<Integer>> orderedListOfCardIds = new HashMap<>();
 
     public ReferenceWithoutReferentsTask(Conversation conversation) {
         super(setupGlobalConfig(conversation));
@@ -75,10 +79,10 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     public synchronized void participantJoinedConversation(Participant participant) {
         if (participant.getParticipantID().equals(DIRECTOR_ID)) {
             director = participant;
-            readyStates.put(PlayerType.DIRECTOR, false);
+            readyStates.put(DIRECTOR, false);
         } else if (participant.getParticipantID().equals(MATCHER_ID)) {
             matcher = participant;
-            readyStates.put(PlayerType.MATCHER, false);
+            readyStates.put(MATCHER, false);
         }
 
         if (!this.experimentHasStarted && director != null && matcher != null) {
@@ -88,8 +92,8 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
             this.isTypingOrNotTyping.addPairWhoAreMutuallyInformedOfTyping(director, matcher);
             this.startExperiment();
 
-            director.sendMessage(new ReferenceWithoutReferentsSetupMessage(PlayerType.DIRECTOR, NUMBER_OF_CARDS));
-            matcher.sendMessage(new ReferenceWithoutReferentsSetupMessage(PlayerType.MATCHER, NUMBER_OF_CARDS));
+            director.sendMessage(new ReferenceWithoutReferentsSetupMessage(DIRECTOR, NUMBER_OF_CARDS));
+            matcher.sendMessage(new ReferenceWithoutReferentsSetupMessage(MATCHER, NUMBER_OF_CARDS));
 
             conversation.newsendInstructionToMultipleParticipants(participants, "New game started.");
         }
@@ -123,7 +127,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                     matcher.sendMessage(new ReferenceWithoutReferentsResetMessage());
 
                     conversation.newsendInstructionToMultipleParticipants(participants, "Turn complete.");
-                    int mismatches = countMismatchedCards();
+                    int mismatches = mismatchCounter.count(orderedListOfCardIds.get(DIRECTOR), orderedListOfCardIds.get(MATCHER));
                     if (mismatches == 0) {
                         ++consecutiveWins;
                         conversation.newsendInstructionToMultipleParticipants(participants, "No mismatches. " + consecutiveWins + " consecutive successful turn(s).");
@@ -131,8 +135,8 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                             conversation.newsendInstructionToMultipleParticipants(participants, "Game complete.");
 
                             consecutiveWins = 0;
-                            readyStates.put(PlayerType.MATCHER, false);
-                            readyStates.put(PlayerType.DIRECTOR, false);
+                            readyStates.put(MATCHER, false);
+                            readyStates.put(DIRECTOR, false);
                             orderedListOfCardIds.clear();
 
                             conversation.newsendInstructionToMultipleParticipants(participants, "New game started.");
@@ -145,47 +149,6 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                 break;
             default:
                 throw new RuntimeException("Unexpected ReferenceWithoutReferents task message type: " + messageTask);
-        }
-    }
-
-    private int countMismatchedCards() {
-        List<Integer> director = orderedListOfCardIds.get(PlayerType.DIRECTOR);
-        List<Integer> matcher = orderedListOfCardIds.get(PlayerType.MATCHER);
-        return mismatchCounter.of(director, matcher);
-    }
-
-    public enum PlayerType {
-        DIRECTOR,
-        MATCHER
-    }
-
-    private static class MismatchCounter {
-        private final Map<Integer, Integer> idMappings;
-
-        MismatchCounter(List<Integer> keys, List<Integer> values) {
-            this(zip(keys, values));
-        }
-
-        MismatchCounter(Map<Integer, Integer> idMappings) {
-            this.idMappings = idMappings;
-        }
-
-        private static Map<Integer, Integer> zip(List<Integer> keys, List<Integer> values) {
-            Map<Integer, Integer> idMappings = new HashMap<>();
-            for (int i = 0; i < NUMBER_OF_CARDS; ++i) {
-                idMappings.put(keys.get(i), values.get(i));
-            }
-            return idMappings;
-        }
-
-        int of(List<Integer> director, List<Integer> matcher) {
-            int mismatches = 0;
-            for (int i = 0; i < NUMBER_OF_CARDS; ++i) {
-                if (!idMappings.get(director.get(i)).equals(matcher.get(i))) {
-                    ++mismatches;
-                }
-            }
-            return mismatches;
         }
     }
 }
