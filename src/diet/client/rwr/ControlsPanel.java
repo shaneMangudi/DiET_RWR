@@ -5,9 +5,16 @@ import java.awt.event.ItemListener;
 import javax.swing.JPanel;
 
 class ControlsPanel extends JPanel {
+    private final ReadyStateToggle readyStateToggle;
+
     ControlsPanel(ItemListener readyStateListener) {
         super(new FlowLayout());
 
-        this.add(new ReadyStateToggle(readyStateListener));
+        readyStateToggle = new ReadyStateToggle(readyStateListener);
+        this.add(readyStateToggle);
+    }
+
+    public void reset() {
+        readyStateToggle.setSelected(false);
     }
 }

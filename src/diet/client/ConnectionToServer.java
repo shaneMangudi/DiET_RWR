@@ -38,7 +38,7 @@ import diet.message.MessageSubliminalStimuliSendSetToClient;
 import diet.message.MessageTask;
 import diet.message.MessageWYSIWYGDocumentSyncFromClientInsert;
 import diet.message.MessageWYSIWYGDocumentSyncFromClientRemove;
-import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsStartMessage;
+import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsSetupMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsTaskMessage;
 import diet.server.Conversation;
 import diet.server.ConversationController.DefaultConversationController;
@@ -340,10 +340,22 @@ public class ConnectionToServer extends Thread {
 
                 if (m instanceof ReferenceWithoutReferentsTaskMessage) {
                     ReferenceWithoutReferentsTaskMessage taskMessage = (ReferenceWithoutReferentsTaskMessage) m;
-                    if (taskMessage.getMessageType() == ReferenceWithoutReferentsTaskMessage.MessageType.START) {
-                        ReferenceWithoutReferentsStartMessage startMessage = (ReferenceWithoutReferentsStartMessage) taskMessage;
-                        referenceWithoutReferentsTaskJFrame = new ReferenceWithoutReferentsTaskJFrame(startMessage.getPlayerType(), startMessage.getNumberOfCards(), this);
+                    switch (taskMessage.getMessageType()) {
+                        case START:
+                            ReferenceWithoutReferentsSetupMessage startMessage = (ReferenceWithoutReferentsSetupMessage) taskMessage;
+                            referenceWithoutReferentsTaskJFrame = new ReferenceWithoutReferentsTaskJFrame(startMessage.getPlayerType(), startMessage.getNumberOfCards(), this);
+                            break;
+                        case RESET:
+                            try {
+                                referenceWithoutReferentsTaskJFrame.resetTurn();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        default:
+                            throw new RuntimeException("Received unexpected ReferenceWithoutReferents task message from server : " + taskMessage);
                     }
+                    continue;
                 }
 
                 // System.err.println("________________________________________________"+cntINCOMING);

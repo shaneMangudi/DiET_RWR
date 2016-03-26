@@ -2,11 +2,11 @@ package diet.message.referenceWithoutReferentsTask;
 
 import diet.server.ConversationController.ReferenceWithoutReferentsTask.PlayerType;
 
-public class ReferenceWithoutReferentsStartMessage extends ReferenceWithoutReferentsTaskMessage {
+public class ReferenceWithoutReferentsSetupMessage extends ReferenceWithoutReferentsTaskMessage {
     private final PlayerType playerType;
     private final int numberOfCards;
 
-    public ReferenceWithoutReferentsStartMessage(PlayerType playerType, int numberOfCards) {
+    public ReferenceWithoutReferentsSetupMessage(PlayerType playerType, int numberOfCards) {
         super(MessageType.START);
         this.playerType = playerType;
         this.numberOfCards = numberOfCards;
