@@ -8,21 +8,19 @@ import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsReset
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsSetupMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsTaskMessage;
 import diet.server.Conversation;
+import diet.server.ConversationController.rwr.CardMappingType;
 import diet.server.ConversationController.rwr.CardMappings;
 import diet.server.ConversationController.rwr.PlayerType;
 import diet.server.Participant;
 import diet.textmanipulationmodules.CyclicRandomTextGenerators.IRandomParticipantIDGenerator;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Vector;
 import java.util.stream.IntStream;
+import javax.swing.JOptionPane;
 import static diet.server.ConversationController.rwr.PlayerType.DIRECTOR;
 import static diet.server.ConversationController.rwr.PlayerType.MATCHER;
-import static java.lang.Boolean.parseBoolean;
 import static java.lang.Integer.parseInt;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -32,7 +30,7 @@ import static javax.swing.JOptionPane.showInputDialog;
 public class ReferenceWithoutReferentsTask extends DefaultConversationController {
     private static final int DEFAULT_NUMBER_OF_CARDS = 8;
     private static final int DEFAULT_REQUIRED_CONSECUTIVE_WINS = 3;
-    private static final boolean CARD_MAPPINGS_SHUFFLED_BY_DEFAULT = false;
+    private static final CardMappingType DEFAULT_CARD_MAPPING_TYPE = CardMappingType.DIRECT;
     private static final String MATCHER_ID = MATCHER.name();
     private static final String DIRECTOR_ID = DIRECTOR.name();
 
@@ -40,18 +38,18 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     private final Map<PlayerType, List<Integer>> orderedListOfCardIds = new HashMap<>();
     private final int numberOfCards;
     private final int requiredConsecutiveWins;
-    private final boolean shuffleCardMappings;
+    private final CardMappingType cardMappingType;
     private Participant matcher = null;
     private Participant director = null;
     private Vector<Participant> participants = null;
-    private int consecutiveWins = 0;
+    private int consecutiveWins;
     private CardMappings cardMappings;
 
     public ReferenceWithoutReferentsTask(Conversation conversation) {
         super(setupGlobalConfig(conversation));
 
         int numberOfCards = DEFAULT_NUMBER_OF_CARDS, requiredConsecutiveWins = DEFAULT_REQUIRED_CONSECUTIVE_WINS;
-        boolean shuffleCardMappings = CARD_MAPPINGS_SHUFFLED_BY_DEFAULT;
+        CardMappingType cardMappingType = DEFAULT_CARD_MAPPING_TYPE;
 
         try {
             numberOfCards = parseInt(showInputDialog("Please input the number of cards: ", numberOfCards));
@@ -64,16 +62,18 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
         }
 
         try {
-            //noinspection ConstantConditions
-            shuffleCardMappings = parseBoolean(showInputDialog("Please input whether card mappings should be shuffled: ", shuffleCardMappings));
+            cardMappingType = (CardMappingType) showInputDialog(null, "Please input the card mapping type: ", "",
+                    JOptionPane.QUESTION_MESSAGE, null,
+                    CardMappingType.values(), DEFAULT_CARD_MAPPING_TYPE
+            );
         } catch (Exception ignored) {
         }
 
         this.numberOfCards = numberOfCards;
         this.requiredConsecutiveWins = requiredConsecutiveWins;
-        this.shuffleCardMappings = shuffleCardMappings;
+        this.cardMappingType = cardMappingType;
 
-        setupCardMappings();
+        setStateForNewGame();
 
         DefaultConversationController.autologinParticipantIDGenerator = new IRandomParticipantIDGenerator() {
             boolean position = true;
@@ -96,15 +96,12 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
         return conversation;
     }
 
-    private void setupCardMappings() {
-        List<Integer> ids = IntStream.rangeClosed(1, numberOfCards).boxed().collect(toList());
-        if (shuffleCardMappings) {
-            List<Integer> copyOfIds = new ArrayList<>(ids);
-            Collections.shuffle(copyOfIds, new Random());
-            cardMappings = new CardMappings(ids, copyOfIds);
-        } else {
-            cardMappings = new CardMappings(ids, ids);
-        }
+    private void setStateForNewGame() {
+        this.consecutiveWins = 0;
+        this.readyStates.put(MATCHER, false);
+        this.readyStates.put(DIRECTOR, false);
+        this.orderedListOfCardIds.clear();
+        this.cardMappings = CardMappings.from(IntStream.rangeClosed(1, this.numberOfCards).boxed().collect(toList()), this.cardMappingType);
     }
 
     @Override
@@ -116,10 +113,8 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     public synchronized void participantJoinedConversation(Participant participant) {
         if (participant.getParticipantID().equals(DIRECTOR_ID)) {
             director = participant;
-            readyStates.put(DIRECTOR, false);
         } else if (participant.getParticipantID().equals(MATCHER_ID)) {
             matcher = participant;
-            readyStates.put(MATCHER, false);
         }
 
         if (!this.experimentHasStarted && director != null && matcher != null) {
@@ -170,11 +165,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                         if (consecutiveWins == requiredConsecutiveWins) {
                             conversation.newsendInstructionToMultipleParticipants(participants, "Game complete.");
 
-                            consecutiveWins = 0;
-                            readyStates.put(MATCHER, false);
-                            readyStates.put(DIRECTOR, false);
-                            orderedListOfCardIds.clear();
-                            setupCardMappings();
+                            setStateForNewGame();
 
                             conversation.newsendInstructionToMultipleParticipants(participants, "New game started.");
                         }
