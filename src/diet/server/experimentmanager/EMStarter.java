@@ -329,6 +329,7 @@ public class EMStarter {
 	}
 
 	public static void main(String[] args2) {
+		System.out.println(System.getProperty("java.class.path"));
 		setLookAndFeel();
 
 		System.out.println(UIManager.getLookAndFeel().getName());
