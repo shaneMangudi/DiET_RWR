@@ -157,11 +157,11 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                     director.sendMessage(new ReferenceWithoutReferentsResetMessage());
                     matcher.sendMessage(new ReferenceWithoutReferentsResetMessage());
 
-                    conversation.newsendInstructionToMultipleParticipants(participants, "Turn complete.");
+                    conversation.newsendInstructionToMultipleParticipants(participants, "Round complete.");
                     int mismatches = cardMappings.countMismatches(orderedListOfCardIds.get(DIRECTOR), orderedListOfCardIds.get(MATCHER));
                     if (mismatches == 0) {
-                        ++consecutiveWins;
-                        conversation.newsendInstructionToMultipleParticipants(participants, "No mismatches. " + consecutiveWins + " consecutive successful turn(s).");
+                        String message = "No mismatches. " + (++consecutiveWins) + " consecutive successful round" + (consecutiveWins > 1 ? "s" : "") + ".";
+                        conversation.newsendInstructionToMultipleParticipants(participants, message);
                         if (consecutiveWins == requiredConsecutiveWins) {
                             conversation.newsendInstructionToMultipleParticipants(participants, "Game complete.");
 
