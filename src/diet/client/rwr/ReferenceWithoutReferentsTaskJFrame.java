@@ -34,6 +34,7 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
         SwingUtilities.invokeLater(this::sendOrderedListOfCardIds);
 
         this.pack();
+        this.setResizable(false);
         this.setVisible(true);
     }
 
