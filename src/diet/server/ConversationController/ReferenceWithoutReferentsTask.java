@@ -13,12 +13,14 @@ import diet.server.ConversationController.rwr.CardMappings;
 import diet.server.ConversationController.rwr.PlayerType;
 import diet.server.Participant;
 import diet.textmanipulationmodules.CyclicRandomTextGenerators.IRandomParticipantIDGenerator;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.stream.IntStream;
 import javax.swing.JOptionPane;
+
 import static diet.server.ConversationController.rwr.PlayerType.DIRECTOR;
 import static diet.server.ConversationController.rwr.PlayerType.MATCHER;
 import static java.lang.Integer.parseInt;
@@ -48,30 +50,12 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     public ReferenceWithoutReferentsTask(Conversation conversation) {
         super(setupGlobalConfig(conversation));
 
-        int numberOfCards = DEFAULT_NUMBER_OF_CARDS, requiredConsecutiveWins = DEFAULT_REQUIRED_CONSECUTIVE_WINS;
-        CardMappingType cardMappingType = DEFAULT_CARD_MAPPING_TYPE;
-
-        try {
-            numberOfCards = parseInt(showInputDialog("Please input the number of cards: ", numberOfCards));
-        } catch (Exception ignored) {
-        }
-
-        try {
-            requiredConsecutiveWins = parseInt(showInputDialog("Please input the required number of wins: ", requiredConsecutiveWins));
-        } catch (Exception ignored) {
-        }
-
-        try {
-            cardMappingType = (CardMappingType) showInputDialog(null, "Please input the card mapping type: ", "",
-                    JOptionPane.QUESTION_MESSAGE, null,
-                    CardMappingType.values(), DEFAULT_CARD_MAPPING_TYPE
-            );
-        } catch (Exception ignored) {
-        }
-
-        this.numberOfCards = numberOfCards;
-        this.requiredConsecutiveWins = requiredConsecutiveWins;
-        this.cardMappingType = cardMappingType;
+        this.numberOfCards = parseInt(showInputDialog("Please input the number of cards: ", DEFAULT_NUMBER_OF_CARDS));
+        this.requiredConsecutiveWins = parseInt(showInputDialog("Please input the required number of wins: ", DEFAULT_REQUIRED_CONSECUTIVE_WINS));
+        this.cardMappingType = (CardMappingType) showInputDialog(null, "Please input the card mapping type: ", "",
+                JOptionPane.QUESTION_MESSAGE, null,
+                CardMappingType.values(), DEFAULT_CARD_MAPPING_TYPE
+        );
 
         setStateForNewGame();
 
