@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Random;
 import javax.swing.Icon;
 import javax.swing.JPanel;
+
+import static diet.server.ConversationController.rwr.PlayerType.DIRECTOR;
 import static java.util.Arrays.asList;
 import static java.util.Collections.shuffle;
 import static java.util.stream.Collectors.toList;
@@ -21,7 +23,7 @@ class CardsPanel extends JPanel {
         super(new FlowLayout());
 
         String cardClass = playerType.name().toLowerCase();
-        CardDragHandler cardDragHandler = new CardDragHandler(this, dragAction);
+        CardDragHandler cardDragHandler = playerType == DIRECTOR ? null : new CardDragHandler(this, dragAction);
 
         for (int id = 1; id <= numberOfCards; ++id) {
             Card card = new Card(cardDragHandler, cardClass, id);

@@ -11,8 +11,10 @@ class Card extends JLabel {
         super(getCardImage(cardClass, id), JLabel.CENTER);
 
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        this.addMouseListener(cardDragHandler);
-        this.addMouseMotionListener(cardDragHandler);
+        if(cardDragHandler != null) {
+            this.addMouseListener(cardDragHandler);
+            this.addMouseMotionListener(cardDragHandler);
+        }
     }
 
     private static ImageIcon getCardImage(String cardClass, int id) {
