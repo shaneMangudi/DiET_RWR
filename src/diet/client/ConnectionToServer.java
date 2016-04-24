@@ -38,6 +38,7 @@ import diet.message.MessageSubliminalStimuliSendSetToClient;
 import diet.message.MessageTask;
 import diet.message.MessageWYSIWYGDocumentSyncFromClientInsert;
 import diet.message.MessageWYSIWYGDocumentSyncFromClientRemove;
+import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsResetMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsSetupMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsTaskMessage;
 import diet.server.Conversation;
@@ -346,11 +347,8 @@ public class ConnectionToServer extends Thread {
                             referenceWithoutReferentsTaskJFrame = new ReferenceWithoutReferentsTaskJFrame(startMessage.getPlayerType(), startMessage.getNumberOfCards(), this);
                             break;
                         case RESET:
-                            try {
-                                referenceWithoutReferentsTaskJFrame.resetTurn();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            ReferenceWithoutReferentsResetMessage resetMessage = (ReferenceWithoutReferentsResetMessage) taskMessage;
+                            referenceWithoutReferentsTaskJFrame.resetTurn(resetMessage.shouldRandomizeCardOrder());
                             break;
                         default:
                             throw new RuntimeException("Received unexpected ReferenceWithoutReferents task message from server : " + taskMessage);

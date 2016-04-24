@@ -138,11 +138,13 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                 readyStates.put(readyStateMessage.getPlayerType(), readyStateMessage.getReadyState());
 
                 if (readyStates.values().stream().allMatch(bool -> bool)) {
-                    director.sendMessage(new ReferenceWithoutReferentsResetMessage());
-                    matcher.sendMessage(new ReferenceWithoutReferentsResetMessage());
-
                     conversation.newsendInstructionToMultipleParticipants(participants, "Round complete.");
                     int mismatches = cardMappings.countMismatches(orderedListOfCardIds.get(DIRECTOR), orderedListOfCardIds.get(MATCHER));
+
+                    ReferenceWithoutReferentsResetMessage resetMessage = new ReferenceWithoutReferentsResetMessage(mismatches == 0);
+                    director.sendMessage(resetMessage);
+                    matcher.sendMessage(resetMessage);
+
                     if (mismatches == 0) {
                         String message = "No mismatches. " + (++consecutiveWins) + " consecutive successful round" + (consecutiveWins > 1 ? "s" : "") + ".";
                         conversation.newsendInstructionToMultipleParticipants(participants, message);

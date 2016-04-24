@@ -4,6 +4,7 @@ import diet.client.ConnectionToServer;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsCardMoveMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsReadyStateMessage;
 import diet.server.ConversationController.rwr.PlayerType;
+
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import javax.swing.JFrame;
@@ -38,8 +39,10 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
         this.setVisible(true);
     }
 
-    public void resetTurn() {
-        cardsPanel.reset();
+    public void resetTurn(boolean shouldRandomizeCardOrder) {
+        if (shouldRandomizeCardOrder) {
+            cardsPanel.reset();
+        }
         controlsPanel.reset();
         SwingUtilities.invokeLater(this::sendOrderedListOfCardIds);
         this.pack();
