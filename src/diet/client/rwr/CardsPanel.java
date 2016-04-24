@@ -64,5 +64,6 @@ class CardsPanel extends JPanel {
         this.topPanel.removeAll();
         this.bottomPanel.removeAll();
         addCardsInRandomOrder();
+        this.invalidate();
     }
 }
