@@ -72,7 +72,7 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
             input = (String) JOptionPane.showInputDialog(this,
                     "Thanks for playing our game! We have now disconnected the chat for a final question.\n" +
                             "What do you think were the objects our game was about?\n" +
-                            "Try to describe - or even name! - as many of the objects from the game as you " +
+                            "Try to describe - or even name! - as many of the objects from the game as you\n" +
                             "can remember using the input in front of you, which is now disconnected from the other player.",
                     "Success",
                     JOptionPane.QUESTION_MESSAGE, null, null, input);
