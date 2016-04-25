@@ -7,8 +7,8 @@ public class ReferenceWithoutReferentsCardMoveMessage extends ReferenceWithoutRe
     private final PlayerType playerType;
     private final List<Integer> orderedListOfCardIds;
 
-    public ReferenceWithoutReferentsCardMoveMessage(PlayerType playerType, List<Integer> orderedListOfCardIds) {
-        super(MessageType.CARD_MOVE);
+    public ReferenceWithoutReferentsCardMoveMessage(String email, String username, PlayerType playerType, List<Integer> orderedListOfCardIds) {
+        super(email, username, MessageType.CARD_MOVE);
 
         this.playerType = playerType;
         this.orderedListOfCardIds = orderedListOfCardIds;

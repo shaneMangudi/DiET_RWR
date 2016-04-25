@@ -4,6 +4,7 @@ import diet.client.ConnectionToServer;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsCardMoveMessage;
 import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsReadyStateMessage;
 import diet.server.ConversationController.rwr.PlayerType;
+import diet.server.Participant;
 
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
@@ -13,12 +14,17 @@ import javax.swing.WindowConstants;
 
 public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
     private final PlayerType playerType;
+    private final String email;
+    private final String username;
     private final ConnectionToServer connectionToServer;
     private final CardsPanel cardsPanel;
     private final ControlsPanel controlsPanel;
 
-    public ReferenceWithoutReferentsTaskJFrame(PlayerType playerType, int numberOfCards, ConnectionToServer connectionToServer) {
+    public ReferenceWithoutReferentsTaskJFrame(String email, String username, PlayerType playerType, int numberOfCards, ConnectionToServer connectionToServer) {
         super(playerType.name());
+
+        this.email = email;
+        this.username = username;
 
         this.connectionToServer = connectionToServer;
         this.playerType = playerType;
@@ -50,11 +56,11 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
     }
 
     private void sendOrderedListOfCardIds() {
-        connectionToServer.sendMessage(new ReferenceWithoutReferentsCardMoveMessage(playerType, cardsPanel.getOrderedListOfCardIds()));
+        connectionToServer.sendMessage(new ReferenceWithoutReferentsCardMoveMessage(email, username, playerType, cardsPanel.getOrderedListOfCardIds()));
     }
 
     private void onReadyStateChange(ItemEvent itemEvent) {
         boolean readyState = itemEvent.getStateChange() == ItemEvent.SELECTED;
-        connectionToServer.sendMessage(new ReferenceWithoutReferentsReadyStateMessage(playerType, readyState));
+        connectionToServer.sendMessage(new ReferenceWithoutReferentsReadyStateMessage(email, username, playerType, readyState));
     }
 }

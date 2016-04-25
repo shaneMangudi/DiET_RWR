@@ -131,7 +131,9 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
             // TODO: Save task move information to the logs
             case CARD_MOVE:
                 ReferenceWithoutReferentsCardMoveMessage cardMoveMessage = (ReferenceWithoutReferentsCardMoveMessage) rwrMessageTask;
-                orderedListOfCardIds.put(cardMoveMessage.getPlayerType(), cardMoveMessage.getOrderedListOfCardIds());
+                List<Integer> orderedListOfCardIds = cardMoveMessage.getOrderedListOfCardIds();
+                this.orderedListOfCardIds.put(cardMoveMessage.getPlayerType(), orderedListOfCardIds);
+                this.conversation.newsaveAdditionalRowOfDataToSpreadsheetOfTurns("cardOrder", participant, orderedListOfCardIds.toString());
                 break;
             case READY_STATE:
                 ReferenceWithoutReferentsReadyStateMessage readyStateMessage = (ReferenceWithoutReferentsReadyStateMessage) rwrMessageTask;
@@ -139,7 +141,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
 
                 if (readyStates.values().stream().allMatch(bool -> bool)) {
                     conversation.newsendInstructionToMultipleParticipants(participants, "Round complete.");
-                    int mismatches = cardMappings.countMismatches(orderedListOfCardIds.get(DIRECTOR), orderedListOfCardIds.get(MATCHER));
+                    int mismatches = cardMappings.countMismatches(this.orderedListOfCardIds.get(DIRECTOR), this.orderedListOfCardIds.get(MATCHER));
 
                     ReferenceWithoutReferentsResetMessage resetMessage = new ReferenceWithoutReferentsResetMessage(mismatches == 0);
                     director.sendMessage(resetMessage);

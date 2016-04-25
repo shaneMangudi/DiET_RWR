@@ -8,6 +8,11 @@ public class ReferenceWithoutReferentsTaskMessage extends MessageTask {
 
     private final MessageType messageType;
 
+    ReferenceWithoutReferentsTaskMessage(String email, String username, MessageType messageType) {
+        super(email, username);
+        this.messageType = messageType;
+    }
+
     ReferenceWithoutReferentsTaskMessage(MessageType messageType) {
         super(EMAIL, USERNAME);
         this.messageType = messageType;

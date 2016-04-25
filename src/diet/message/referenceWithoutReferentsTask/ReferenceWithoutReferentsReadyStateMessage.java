@@ -6,8 +6,8 @@ public class ReferenceWithoutReferentsReadyStateMessage extends ReferenceWithout
     private final PlayerType playerType;
     private final boolean readyState;
 
-    public ReferenceWithoutReferentsReadyStateMessage(PlayerType playerType, boolean readyState) {
-        super(MessageType.READY_STATE);
+    public ReferenceWithoutReferentsReadyStateMessage(String email, String username, PlayerType playerType, boolean readyState) {
+        super(email, username, MessageType.READY_STATE);
         this.playerType = playerType;
         this.readyState = readyState;
     }

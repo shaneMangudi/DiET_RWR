@@ -344,7 +344,7 @@ public class ConnectionToServer extends Thread {
                     switch (taskMessage.getMessageType()) {
                         case START:
                             ReferenceWithoutReferentsSetupMessage startMessage = (ReferenceWithoutReferentsSetupMessage) taskMessage;
-                            referenceWithoutReferentsTaskJFrame = new ReferenceWithoutReferentsTaskJFrame(startMessage.getPlayerType(), startMessage.getNumberOfCards(), this);
+                            referenceWithoutReferentsTaskJFrame = new ReferenceWithoutReferentsTaskJFrame(this.getEmail(), this.getUsername(), startMessage.getPlayerType(), startMessage.getNumberOfCards(), this);
                             break;
                         case RESET:
                             ReferenceWithoutReferentsResetMessage resetMessage = (ReferenceWithoutReferentsResetMessage) taskMessage;
