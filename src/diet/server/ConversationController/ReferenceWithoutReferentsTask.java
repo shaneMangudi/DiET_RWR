@@ -128,7 +128,6 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
 
         ReferenceWithoutReferentsTaskMessage rwrMessageTask = (ReferenceWithoutReferentsTaskMessage) messageTask;
         switch (rwrMessageTask.getMessageType()) {
-            // TODO: Save task move information to the logs
             case CARD_MOVE:
                 ReferenceWithoutReferentsCardMoveMessage cardMoveMessage = (ReferenceWithoutReferentsCardMoveMessage) rwrMessageTask;
                 List<Integer> orderedListOfCardIds = cardMoveMessage.getOrderedListOfCardIds();
