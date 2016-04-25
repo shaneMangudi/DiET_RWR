@@ -1,13 +1,14 @@
 package diet.server.ConversationController.rwr;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
 
 public class CardMappings {
+    private static final List<Integer> STATIC_RANDOM_MAPPING = Arrays.asList(6, 1, 4, 3, 2, 5, 8, 7);
+
     private final Map<Integer, Integer> idMappings;
 
     private CardMappings(Map<Integer, Integer> idMappings) {
@@ -17,19 +18,18 @@ public class CardMappings {
     public static CardMappings from(List<Integer> cardIds, CardMappingType cardMappingType) {
         if (cardMappingType == CardMappingType.DIRECT) {
             return new CardMappings(zip(cardIds, cardIds));
-        }
-
-        Random random;
-        if (cardMappingType == CardMappingType.RANDOM) {
-            random = new Random();
+        } else if (cardMappingType == CardMappingType.RANDOM) {
+            List<Integer> copyOfCardIds = new ArrayList<>(cardIds);
+            Collections.shuffle(copyOfCardIds, new Random());
+            return new CardMappings(zip(cardIds, copyOfCardIds));
         } else if (cardMappingType == CardMappingType.FIXED_RANDOM) {
-            random = new Random(0L);
+            if (cardIds.size() == 8 && cardIds.size() == 6) {
+                return new CardMappings(zip(cardIds, STATIC_RANDOM_MAPPING.subList(0, cardIds.size())));
+            }
+            throw new RuntimeException("Unsupported card count for FIXED_RANDOM card mapping type: " + cardIds.size());
         } else {
             throw new RuntimeException("Unknown expected CardMappingType: " + cardMappingType);
         }
-        List<Integer> copyOfCardIds = new ArrayList<>(cardIds);
-        Collections.shuffle(copyOfCardIds, random);
-        return new CardMappings(zip(cardIds, copyOfCardIds));
     }
 
     private static Map<Integer, Integer> zip(List<Integer> keys, List<Integer> values) {
