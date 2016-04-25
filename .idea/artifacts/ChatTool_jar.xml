@@ -3,8 +3,6 @@
     <output-path>$PROJECT_DIR$/out/artifacts/ChatTool_jar</output-path>
     <root id="archive" name="ChatTool.jar">
       <element id="module-output" name="ChatTool" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/stanford-parser.jar" path-in-jar="/" />
-      <element id="library" level="module" name="stanford-parser.jar" module-name="ChatTool" />
     </root>
   </artifact>
 </component>
