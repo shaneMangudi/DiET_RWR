@@ -82,11 +82,13 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         labelPanel.add(new JLabel("Thanks for playing! We have now disconnected the chat for a final question:"), gridBagConstraints);
         gridBagConstraints.gridy = 1;
-        labelPanel.add(new JLabel(""), gridBagConstraints);
+        labelPanel.add(new JLabel("    "), gridBagConstraints);
         gridBagConstraints.gridy = 2;
         labelPanel.add(new JLabel("What do you think were the objects our game was about?"), gridBagConstraints);
         gridBagConstraints.gridy = 3;
         labelPanel.add(new JLabel("Try to describe as many of the objects from the game as you can remember."), gridBagConstraints);
+        gridBagConstraints.gridy = 4;
+        labelPanel.add(new JLabel("    "), gridBagConstraints);
 
         optionPaneContent.add(labelPanel, BorderLayout.NORTH);
         optionPaneContent.add(inputPanel, BorderLayout.SOUTH);
