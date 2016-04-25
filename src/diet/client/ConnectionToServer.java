@@ -347,8 +347,13 @@ public class ConnectionToServer extends Thread {
                             referenceWithoutReferentsTaskJFrame = new ReferenceWithoutReferentsTaskJFrame(this.getEmail(), this.getUsername(), startMessage.getPlayerType(), startMessage.getNumberOfCards(), this);
                             break;
                         case RESET:
+                            // TODO: Unblock user input into chat window
                             ReferenceWithoutReferentsResetMessage resetMessage = (ReferenceWithoutReferentsResetMessage) taskMessage;
                             referenceWithoutReferentsTaskJFrame.resetTurn(resetMessage.shouldRandomizeCardOrder());
+                            break;
+                        case REQUEST_FINAL_INPUT:
+                            // TODO: Block user input into chat window
+                            referenceWithoutReferentsTaskJFrame.requestFinalInput();
                             break;
                         default:
                             throw new RuntimeException("Received unexpected ReferenceWithoutReferents task message from server : " + taskMessage);

@@ -2,11 +2,7 @@ package diet.server.ConversationController;
 
 import diet.message.MessageChatTextFromClient;
 import diet.message.MessageTask;
-import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsCardMoveMessage;
-import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsReadyStateMessage;
-import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsResetMessage;
-import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsSetupMessage;
-import diet.message.referenceWithoutReferentsTask.ReferenceWithoutReferentsTaskMessage;
+import diet.message.referenceWithoutReferentsTask.*;
 import diet.server.Conversation;
 import diet.server.ConversationController.rwr.CardMappingType;
 import diet.server.ConversationController.rwr.CardMappings;
@@ -14,12 +10,12 @@ import diet.server.ConversationController.rwr.PlayerType;
 import diet.server.Participant;
 import diet.textmanipulationmodules.CyclicRandomTextGenerators.IRandomParticipantIDGenerator;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.stream.IntStream;
-import javax.swing.JOptionPane;
 
 import static diet.server.ConversationController.rwr.PlayerType.DIRECTOR;
 import static diet.server.ConversationController.rwr.PlayerType.MATCHER;
@@ -37,6 +33,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
     private static final String DIRECTOR_ID = DIRECTOR.name();
 
     private final Map<PlayerType, Boolean> readyStates = new HashMap<>();
+    private final Map<Participant, Boolean> gameCompleted = new HashMap<>();
     private final Map<PlayerType, List<Integer>> orderedListOfCardIds = new HashMap<>();
     private final int numberOfCards;
     private final int requiredConsecutiveWins;
@@ -82,6 +79,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
 
     private void setStateForNewGame() {
         this.consecutiveWins = 0;
+        this.gameCompleted.clear();
         this.readyStates.put(MATCHER, false);
         this.readyStates.put(DIRECTOR, false);
         this.orderedListOfCardIds.clear();
@@ -132,7 +130,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                 ReferenceWithoutReferentsCardMoveMessage cardMoveMessage = (ReferenceWithoutReferentsCardMoveMessage) rwrMessageTask;
                 List<Integer> orderedListOfCardIds = cardMoveMessage.getOrderedListOfCardIds();
                 this.orderedListOfCardIds.put(cardMoveMessage.getPlayerType(), orderedListOfCardIds);
-                this.conversation.newsaveAdditionalRowOfDataToSpreadsheetOfTurns("cardOrder", participant, orderedListOfCardIds.toString());
+                this.conversation.newsaveAdditionalRowOfDataToSpreadsheetOfTurns("customInput", participant, orderedListOfCardIds.toString());
                 break;
             case READY_STATE:
                 ReferenceWithoutReferentsReadyStateMessage readyStateMessage = (ReferenceWithoutReferentsReadyStateMessage) rwrMessageTask;
@@ -150,17 +148,31 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                         String message = "No mismatches. " + (++consecutiveWins) + " consecutive successful round" + (consecutiveWins > 1 ? "s" : "") + ".";
                         conversation.newsendInstructionToMultipleParticipants(participants, message);
                         if (consecutiveWins == requiredConsecutiveWins) {
-                            conversation.newsendInstructionToMultipleParticipants(participants, "Game complete.");
-
-                            setStateForNewGame();
-
-                            conversation.newsendInstructionToMultipleParticipants(participants, "New game started.");
+                            ReferenceWithoutReferentsRequestFinalInputMessage requestInputMessage = new ReferenceWithoutReferentsRequestFinalInputMessage();
+                            director.sendMessage(requestInputMessage);
+                            matcher.sendMessage(requestInputMessage);
                         }
                     } else {
                         conversation.newsendInstructionToMultipleParticipants(participants, mismatches + " mismatch(es).");
                         consecutiveWins = 0;
                     }
                 }
+                break;
+            case FINAL_INPUT:
+                ReferenceWithoutReferentsFinalInputMessage finalInputMessage = (ReferenceWithoutReferentsFinalInputMessage) rwrMessageTask;
+                this.conversation.newsaveAdditionalRowOfDataToSpreadsheetOfTurns("customInput", participant, finalInputMessage.toString());
+
+                conversation.newsendInstructionToParticipant(participant, "Game complete.");
+                gameCompleted.put(participant, true);
+
+                if (gameCompleted.values().size() == 2 && gameCompleted.values().stream().allMatch(bool -> bool)) {
+                    setStateForNewGame();
+                    conversation.newsendInstructionToMultipleParticipants(participants, "New game started.");
+                    ReferenceWithoutReferentsResetMessage resetMessage = new ReferenceWithoutReferentsResetMessage(true);
+                    director.sendMessage(resetMessage);
+                    matcher.sendMessage(resetMessage);
+                }
+
                 break;
             default:
                 throw new RuntimeException("Unexpected ReferenceWithoutReferents task message type: " + messageTask);

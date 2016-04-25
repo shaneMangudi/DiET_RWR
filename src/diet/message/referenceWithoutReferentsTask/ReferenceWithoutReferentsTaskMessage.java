@@ -26,6 +26,8 @@ public class ReferenceWithoutReferentsTaskMessage extends MessageTask {
         START,
         CARD_MOVE,
         READY_STATE,
-        RESET
+        RESET,
+        REQUEST_FINAL_INPUT,
+        FINAL_INPUT
     }
 }
