@@ -2,6 +2,7 @@ package diet.server.ConversationController.rwr;
 
 public enum CardMappingType {
     DIRECT,
-    FIXED_RANDOM,
+    PSEUDO_RANDOM,
+    STATIC_RANDOM,
     RANDOM
 }
