@@ -98,10 +98,12 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
             JOptionPane.showConfirmDialog(null, optionPaneContent, "Success", JOptionPane.OK_CANCEL_OPTION);
             input = inputField.getText();
             input = input == null ? "" : input;
-            int selectedOption = JOptionPane.showConfirmDialog(this, "Your response was: \n" + input + "", "Confirm your input.", YES_NO_OPTION, INFORMATION_MESSAGE);
-            if (selectedOption == YES_OPTION) break;
+            int selectedOption = JOptionPane.showConfirmDialog(null, "Your response was: \n" + input + "", "Confirm your response.", JOptionPane.OK_CANCEL_OPTION, INFORMATION_MESSAGE);
+            if (selectedOption == YES_OPTION) {
+                connectionToServer.sendMessage(new ReferenceWithoutReferentsFinalInputMessage(email, username, input));
+                JOptionPane.showMessageDialog(null, "Thank you for your time!", "Game complete", JOptionPane.PLAIN_MESSAGE);
+                break;
+            }
         }
-
-        connectionToServer.sendMessage(new ReferenceWithoutReferentsFinalInputMessage(email, username, input));
     }
 }
