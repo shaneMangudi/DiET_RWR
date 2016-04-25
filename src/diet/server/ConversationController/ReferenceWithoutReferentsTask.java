@@ -160,7 +160,7 @@ public class ReferenceWithoutReferentsTask extends DefaultConversationController
                 break;
             case FINAL_INPUT:
                 ReferenceWithoutReferentsFinalInputMessage finalInputMessage = (ReferenceWithoutReferentsFinalInputMessage) rwrMessageTask;
-                this.conversation.newsaveAdditionalRowOfDataToSpreadsheetOfTurns("customInput", participant, finalInputMessage.toString());
+                this.conversation.newsaveAdditionalRowOfDataToSpreadsheetOfTurns("customInput", participant, finalInputMessage.getInput());
 
                 conversation.newsendInstructionToParticipant(participant, "Game complete.");
                 gameCompleted.put(participant, true);
