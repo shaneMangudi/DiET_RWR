@@ -70,9 +70,11 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
         String input = "";
         while(true) {
             input = (String) JOptionPane.showInputDialog(this,
-                    "What do you think were the objects our game was about? Try to describe - or even name! - as many of the objects from the game as you " +
-                            "can remember using the chat window in front of you, which is now disconnected from the other player.",
-                    "Thanks for playing our game! We have now disconnected the chat for a final question.",
+                    "Thanks for playing our game! We have now disconnected the chat for a final question.\n" +
+                            "What do you think were the objects our game was about?\n" +
+                            "Try to describe - or even name! - as many of the objects from the game as you " +
+                            "can remember using the input in front of you, which is now disconnected from the other player.",
+                    "Success",
                     JOptionPane.QUESTION_MESSAGE, null, null, input);
             int selectedOption = JOptionPane.showConfirmDialog(this, "Your response was: \n" + input + "", "Confirm your input.", YES_NO_OPTION, INFORMATION_MESSAGE);
             if(selectedOption == YES_OPTION) break;
