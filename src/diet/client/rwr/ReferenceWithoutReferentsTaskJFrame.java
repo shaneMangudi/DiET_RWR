@@ -21,9 +21,10 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
     private final ConnectionToServer connectionToServer;
     private final CardsPanel cardsPanel;
     private final ControlsPanel controlsPanel;
+    private final int numberOfCards;
 
     public ReferenceWithoutReferentsTaskJFrame(String email, String username, PlayerType playerType, int numberOfCards,
-                                               ConnectionToServer connectionToServer) {
+            ConnectionToServer connectionToServer) {
         super(playerType.name());
 
         this.email = email;
@@ -35,6 +36,7 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
         this.setLayout(new BorderLayout());
         this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
+        this.numberOfCards = numberOfCards;
         this.cardsPanel = new CardsPanel(playerType, numberOfCards, this::sendOrderedListOfCardIds);
         this.controlsPanel = new ControlsPanel(this::onReadyStateChange);
 
@@ -70,6 +72,7 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
     }
 
     public void requestFinalInput() {
+        this.setVisible(false);
         JPanel optionPaneContent = new JPanel(new BorderLayout());
         JTextArea inputField = new JTextArea();
         inputField.setRows(5);
@@ -80,14 +83,14 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = GridBagConstraints.WEST;
-        labelPanel.add(new JLabel("Thanks for playing! We have now disconnected the chat for a final question:"), gridBagConstraints);
-        gridBagConstraints.gridy = 1;
         labelPanel.add(new JLabel("    "), gridBagConstraints);
+        gridBagConstraints.gridy = 1;
+        labelPanel.add(new JLabel("What do you think were the " + numberOfCards + " objects you were arranging?"),
+                gridBagConstraints);
         gridBagConstraints.gridy = 2;
-        labelPanel.add(new JLabel("What do you think were the objects our game was about?"), gridBagConstraints);
+        labelPanel.add(new JLabel("Try to describe as many of the objects from the game as you can remember."),
+                gridBagConstraints);
         gridBagConstraints.gridy = 3;
-        labelPanel.add(new JLabel("Try to describe as many of the objects from the game as you can remember."), gridBagConstraints);
-        gridBagConstraints.gridy = 4;
         labelPanel.add(new JLabel("    "), gridBagConstraints);
 
         optionPaneContent.add(labelPanel, BorderLayout.NORTH);
@@ -98,12 +101,15 @@ public class ReferenceWithoutReferentsTaskJFrame extends JFrame {
             JOptionPane.showConfirmDialog(null, optionPaneContent, "Success", JOptionPane.OK_CANCEL_OPTION);
             input = inputField.getText();
             input = input == null ? "" : input;
-            int selectedOption = JOptionPane.showConfirmDialog(null, "Your response was: \n" + input + "", "Confirm your response.", JOptionPane.OK_CANCEL_OPTION, INFORMATION_MESSAGE);
+            int selectedOption = JOptionPane.showConfirmDialog(null, "Your response was: \n" + input + "",
+                    "Confirm your response.", JOptionPane.OK_CANCEL_OPTION, INFORMATION_MESSAGE);
             if (selectedOption == YES_OPTION) {
                 connectionToServer.sendMessage(new ReferenceWithoutReferentsFinalInputMessage(email, username, input));
-                JOptionPane.showMessageDialog(null, "Thank you for your time!", "Game complete", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Thank you for your time!", "Game complete",
+                        JOptionPane.PLAIN_MESSAGE);
                 break;
             }
         }
+        this.setVisible(true);
     }
 }

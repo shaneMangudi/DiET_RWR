@@ -353,7 +353,9 @@ public class ConnectionToServer extends Thread {
                             break;
                         case REQUEST_FINAL_INPUT:
                             // TODO: Block user input into chat window
+                        	cEventHandler.getChatFrame().setVisible(false);
                             referenceWithoutReferentsTaskJFrame.requestFinalInput();
+                        	cEventHandler.getChatFrame().setVisible(true);
                             break;
                         default:
                             throw new RuntimeException("Received unexpected ReferenceWithoutReferents task message from server : " + taskMessage);
