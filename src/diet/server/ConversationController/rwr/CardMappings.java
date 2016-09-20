@@ -20,10 +20,7 @@ public class CardMappings {
             Collections.shuffle(copyOfCardIds, random);
             return new CardMappings(zip(cardIds, copyOfCardIds));
         } else if (cardMappingType == CardMappingType.STATIC_RANDOM) {
-            if (cardIds.size() == 8 || cardIds.size() == 6) {
-                return new CardMappings(zip(cardIds, STATIC_RANDOM_MAPPING.subList(0, cardIds.size())));
-            }
-            throw new RuntimeException("Unsupported card count for PSEUDO_RANDOM card mapping type: " + cardIds.size());
+            return new CardMappings(zip(cardIds, STATIC_RANDOM_MAPPING.subList(0, cardIds.size())));
         } else {
             throw new RuntimeException("Unknown expected CardMappingType: " + cardMappingType);
         }
